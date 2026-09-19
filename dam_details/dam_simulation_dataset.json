@@ -1,0 +1,1824 @@
+{
+  "dataset_name": "HYDRO-BREAK 360 - Comprehensive Dam & River Basin Simulation Dataset",
+  "version": "2.0.0",
+  "created_date": "2026-09-08",
+  "problem_statement": "NTRO Problem Statement ID: 26161 - Dam Break Inundation Modelling",
+  "total_presets": 8,
+  "total_catalog_dams": 10,
+  "data_sources_and_internet_citations": {
+    "official_government_repositories": [
+      {
+        "institution": "Central Water Commission (CWC), Ministry of Jal Shakti, Government of India",
+        "repository": "National Register of Large Dams (NRLD)",
+        "url": "https://cwc.gov.in/national-register-large-dams",
+        "data_utilized": "Dam structural heights, crest lengths, gross/live storage capacities (MCM), commissioning years, foundation types, and river basin classifications."
+      },
+      {
+        "institution": "Central Water Commission (CWC) & ISRO",
+        "repository": "India Water Resources Information System (India-WRIS)",
+        "url": "https://indiawris.gov.in/wris/",
+        "data_utilized": "River network thalwegs, catchment boundaries, reservoir forebay coordinates, and official hydrological gauging station locations."
+      },
+      {
+        "institution": "Office of the Registrar General & Census Commissioner, Ministry of Home Affairs, India",
+        "repository": "Census of India 2011 (District Census Handbooks)",
+        "url": "https://censusindia.gov.in/census.website/",
+        "data_utilized": "Village and urban settlement population figures along downstream river corridors (Raini, Tapovan, Joshimath, North Lakhimpur, Devprayag, Rishikesh, Vandiperiyar, Supaul, Padum, Srinagar)."
+      }
+    ],
+    "disaster_investigation_reports": [
+      {
+        "event": "Chamoli Flash Flood Disaster (Feb 2021) - Rishi Ganga / Dhauliganga",
+        "authorities": "Wadia Institute of Himalayan Geology (WIHG), ISRO-NRSC, Geological Survey of India (GSI)",
+        "reference_papers": [
+          "Shugar, D.H., et al. (2021). 'A massive rock and ice avalanche caused the 2021 disaster at Chamoli, Indian Himalaya.' Science, 373(6552), 300-306. DOI: 10.1126/science.abh4455",
+          "WIHG Special Scientific Investigation Report on Chamoli Rock/Ice Avalanche and Downstream Damming (Feb 2021).",
+          "NRSC/ISRO Post-Disaster Satellite Flood Inundation & Debris Torrent Assessment (Feb 2021)."
+        ],
+        "url": "https://www.wihg.res.in and https://www.nrsc.gov.in",
+        "parameters_derived": "Rock/ice dam height (~35m), impoundment volume (~12.5 MCM), breach point coordinates (30.4905\u00b0N, 79.6965\u00b0E), downstream wave propagation transit times to Raini and Tapovan."
+      },
+      {
+        "event": "Phuktal River Landslide Dam Burst (Zanskar, Ladakh, 2015)",
+        "authorities": "National Disaster Management Authority (NDMA) & Kargil District Administration",
+        "reference_papers": [
+          "NDMA Multi-Disciplinary Committee Report on Phuktal Landslide Dammed Lake Hazard (2015).",
+          "NRSC/ISRO Monitoring of Landslide Dam on Tsarap Chu River using Cartosat and RISAT Radar (Mar-May 2015)."
+        ],
+        "url": "https://ndma.gov.in",
+        "parameters_derived": "Landslide blockage height (~60m), water head (~52m), impounded lake volume (~24 MCM), breach coordinates (33.2685\u00b0N, 77.1650\u00b0E), downstream flood path to Padum."
+      },
+      {
+        "event": "Wapriyang Landslide Barrier Lake (Siang Basin, Arunachal Pradesh, 2021)",
+        "authorities": "Central Water Commission (CWC) & North Eastern Space Applications Centre (NESAC / ISRO)",
+        "reference_papers": [
+          "CWC Brahmaputra Basin Hydrological Warning Bulletin for Siang / Brahmaputra (Nov 2021).",
+          "NESAC / ISRO Satellite Monitoring of Landslide Dam Formations in Upper Siang."
+        ],
+        "url": "https://nesac.gov.in",
+        "parameters_derived": "Debris blockage height (~45m), water head (~38m), volume (~18 MCM), breach coordinates (28.4850\u00b0N, 94.8820\u00b0E), downstream path to Yingkiong and Pasighat."
+      },
+      {
+        "event": "Great Kashmir Valley Flood (Jhelum River, Sep 2014)",
+        "authorities": "J&K Irrigation & Flood Control Department (J&K I&FC) & CWC",
+        "reference_papers": [
+          "J&K I&FC Comprehensive Flood Mitigation Plan for River Jhelum (Phase I & II).",
+          "Central Water Commission (CWC) Special Study on September 2014 Flood in Jhelum Basin.",
+          "Space Applications Centre (SAC/ISRO) Satellite Flood Inundation Atlas of Jammu & Kashmir (2014)."
+        ],
+        "url": "http://jkifc.nic.in and https://www.isro.gov.in",
+        "parameters_derived": "Sangam gauge breach/overtopping height (~16m), flood volume (~135 MCM), reach coordinates (33.7250\u00b0N, 75.1480\u00b0E), inundation depths in Srinagar (Lal Chowk / Rajbagh)."
+      },
+      {
+        "event": "Kosi River Embankment Breach (Kusaha, Bihar, Aug 2008)",
+        "authorities": "Central Water Commission (CWC) High-Level Technical Committee & Bihar State Disaster Management Authority (BSDMA)",
+        "reference_papers": [
+          "Report of the High Level Technical Committee on Breach of Eastern Afflux Bund of Kosi Barrage at Kusaha (CWC, 2008).",
+          "Sinha, R. (2009). 'The Great avulsion of Kosi on 18 August 2008.' Current Science, 97(3), 429-433."
+        ],
+        "url": "http://disastermgmt.bih.nic.in",
+        "parameters_derived": "Embankment height (~12m), failure water head (~8.5m), breach volume (~85 MCM), coordinates (26.5298\u00b0N, 86.9387\u00b0E), avulsion channel path through Supaul and Madhepura."
+      }
+    ],
+    "geospatial_topography_sources": [
+      {
+        "dataset": "NASA Shuttle Radar Topography Mission (SRTM v3.0, 1 Arc-Second / 30m Global DEM)",
+        "provider": "NASA Jet Propulsion Laboratory (JPL) & USGS EarthExplorer",
+        "url": "https://earthexplorer.usgs.gov/ and https://portal.opentopography.org/",
+        "data_utilized": "Downstream thalweg elevation profiles, valley bed slopes (S0), cross-sectional river canyon depths, and designated safe haven relative elevation differences (+16m to +920m above riverbed)."
+      },
+      {
+        "dataset": "OpenStreetMap & Google Maps Hybrid / Satellite Cartography",
+        "provider": "OpenStreetMap Foundation & Google Earth Engine API",
+        "url": "https://www.openstreetmap.org/ and https://developers.google.com/earth-engine/",
+        "data_utilized": "Infrastructure positioning, bridge crossings, national highway alignments, and satellite basemap tile registration."
+      }
+    ],
+    "satellite_remote_sensing_radar": [
+      {
+        "sensor": "Sentinel-1 C-band Synthetic Aperture Radar (SAR)",
+        "provider": "European Space Agency (ESA) Copernicus Programme & Google Earth Engine (GEE)",
+        "url": "https://browser.dataspace.copernicus.eu/ and https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S1_GRD",
+        "frequency_band": "5.405 GHz (C-band radar)",
+        "polarization": "VV (Vertical-Vertical) and VH (Vertical-Horizontal)",
+        "water_detection_threshold": "< -16.5 dB backscatter (specular reflection of radar waves away from antenna over standing open water)",
+        "dem_slope_mask": "SRTM 30m slope < 5 degrees (eliminates mountain radar shadow false positives)",
+        "data_utilized": "Automated cloud-penetrating water detection pipeline during heavy monsoon cloud cover."
+      }
+    ],
+    "scientific_engineering_methodology": [
+      {
+        "method": "Froehlich (2008) ASCE Dam Breach Regressions",
+        "citation": "Froehlich, D.C. (2008). 'Embankment Dam Breach Parameters and Their Uncertainties.' ASCE Journal of Hydraulic Engineering, 134(12), 1708-1721. DOI: 10.1061/(ASCE)0733-9429(2008)134:12(1708)",
+        "equations": {
+          "average_breach_width": "Bavg = 0.27 * kO * (Vw ** 0.32) * (hb ** 0.04)",
+          "time_to_failure": "tf = 63.2 * sqrt(Vw / (g * hb^2)) [seconds]",
+          "peak_discharge": "Qp = Cd * [Bavg * hb^1.5 + (8/15) * z * sqrt(2g) * hb^2.5] [m3/s]",
+          "recession_constant": "tau = 1.6 * tf"
+        }
+      },
+      {
+        "method": "Smoothed Particle Hydrodynamics (SPH) Lagrangian Fluid Mechanics",
+        "citation": "Monaghan, J.J. (1992). 'Smoothed Particle Hydrodynamics.' Annual Review of Astronomy and Astrophysics; Violeau, D., & Rogers, B.D. (2016). 'SPH for free-surface flows.' Journal of Hydraulic Research.",
+        "formulation": "Near-field violent kinetic jet: v0 = sqrt(2 * g * hw); Gaussian cross-stream momentum dispersion sigma = sigma0 + k_disp * d."
+      },
+      {
+        "method": "Delft3D 2D Depth-Averaged Shallow Water Equations (SWE)",
+        "citation": "Deltares (2022). 'Delft3D-FLOW User Manual: Simulation of multi-dimensional hydrodynamic flows and transport phenomena.' Delft, The Netherlands.",
+        "formulation": "Manning flow velocity v = (1/n) * Rh^(2/3) * S0^(1/2); Wave celerity c = 1.45 * v; Lateral floodplain diffusion W(d) = max(60 + 12d + 25h, 40m)."
+      },
+      {
+        "method": "Multi-Tier Hazard & HADR Classification Standards",
+        "citation": "National Disaster Management Authority (NDMA) Dam Break Emergency Action Plan Guidelines; US Bureau of Reclamation (USBR) ACER Technical Memorandum No. 11.",
+        "thresholds": {
+          "high_danger_red": "Water depth h >= 2.5 m OR Flow velocity v >= 5.0 m/s (Structural destruction, impassable evacuation routes)",
+          "low_danger_yellow": "Water depth 0.3 m <= h < 2.5 m (Overbank floodplain diffusion, waterlogging, advisory evacuation)",
+          "safe_havens_green": "Elevated terrain >= 25 m above valley floor, situated 100% outside maximum flood hazard contour"
+        }
+      }
+    ]
+  },
+  "dams": [
+    {
+      "id": "rishi_ganga",
+      "name": "Rishi Ganga Rock/Ice Dam (Chamoli 2021)",
+      "river": "Rishi Ganga / Dhauliganga",
+      "state": "Uttarakhand",
+      "coordinates": {
+        "latitude": 30.4905,
+        "longitude": 79.6965,
+        "crest_elevation_m": 2040
+      },
+      "structural_parameters": {
+        "dam_height_m": 35.0,
+        "water_head_at_failure_m": 30.0,
+        "reservoir_volume_mcm": 12.5,
+        "reservoir_volume_m3": 12500000.0,
+        "failure_mode": "landslide_breach",
+        "failure_mode_description": "Massive rock/ice avalanche dam impoundment and sudden outburst (kO=1.3, z=1.0)",
+        "channel_bed_slope_m_per_m": 0.035,
+        "mannings_roughness_n": 0.045,
+        "reach_total_length_km": 32.5
+      },
+      "historical_context": "Site of the Feb 2021 Chamoli disaster where a rock/ice avalanche dammed the Rishi Ganga and catastrophically breached, causing sudden high-velocity flash floods downstream.",
+      "froehlich_breach_hydrodynamics": {
+        "average_breach_width_m": 75.06,
+        "breach_side_slope_z": 1.0,
+        "time_to_failure_hr": 0.66,
+        "time_to_failure_min": 39.6,
+        "peak_outflow_discharge_m3s": 40763.9,
+        "total_volume_released_mcm": 11.73,
+        "total_volume_released_m3": 11730000.0
+      },
+      "hydraulic_celerity_and_velocity": {
+        "sph_near_field_jet_velocity_mps": 22.0,
+        "delft3d_wave_celerity_mps": 20.3,
+        "delft3d_mean_manning_velocity_mps": 14.0
+      },
+      "hadr_summary": {
+        "total_population_at_risk": 8315,
+        "bridges_infrastructure_threatened": 2,
+        "settlements_threatened": 3,
+        "est_agricultural_loss_ha": 1229.0,
+        "est_economic_exposure_inr_crores": 150.0,
+        "emergency_protocols": [
+          "Issue immediate Level-3 Flash Flood Red Alert to downstream district collectors.",
+          "Evacuate all settlements within 0-10 km zone (lead time under 45 minutes).",
+          "Shutdown downstream hydel power intakes and secure electrical substations.",
+          "Deploy National Disaster Response Force (NDRF) boats at designated staging ghats.",
+          "Establish relief centers at elevations at least 20m above current river water line."
+        ]
+      },
+      "downstream_reach_stations": [
+        {
+          "station_index": 1,
+          "station_name": "Breach Point (Rishi Ganga Gorge)",
+          "distance_downstream_km": 0.0,
+          "latitude": 30.4905,
+          "longitude": 79.6965,
+          "riverbed_elevation_m": 2040,
+          "station_type": "dam",
+          "population_exposed": 0,
+          "sph_wave_arrival_hr": 0.0,
+          "delft3d_wave_arrival_hr": 0.0,
+          "evacuation_deadline": "T+00h 00m",
+          "peak_flood_depth_m": 30.0,
+          "peak_flow_velocity_mps": 22.0,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 2,
+          "station_name": "Rishi Ganga Confluence",
+          "distance_downstream_km": 2.2,
+          "latitude": 30.485,
+          "longitude": 79.689,
+          "riverbed_elevation_m": 1960,
+          "station_type": "confluence",
+          "population_exposed": 45,
+          "sph_wave_arrival_hr": 0.03,
+          "delft3d_wave_arrival_hr": 0.03,
+          "evacuation_deadline": "T+00h 02m",
+          "peak_flood_depth_m": 27.15,
+          "peak_flow_velocity_mps": 20.76,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 3,
+          "station_name": "Raini Village (Bridge Destroyed)",
+          "distance_downstream_km": 5.1,
+          "latitude": 30.483,
+          "longitude": 79.665,
+          "riverbed_elevation_m": 1850,
+          "station_type": "village",
+          "population_exposed": 320,
+          "sph_wave_arrival_hr": 0.08,
+          "delft3d_wave_arrival_hr": 0.07,
+          "evacuation_deadline": "T+00h 05m",
+          "peak_flood_depth_m": 23.79,
+          "peak_flow_velocity_mps": 19.24,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 4,
+          "station_name": "Tapovan Vishnugad Hydel Project",
+          "distance_downstream_km": 9.8,
+          "latitude": 30.505,
+          "longitude": 79.638,
+          "riverbed_elevation_m": 1720,
+          "station_type": "infrastructure",
+          "population_exposed": 480,
+          "sph_wave_arrival_hr": 0.15,
+          "delft3d_wave_arrival_hr": 0.13,
+          "evacuation_deadline": "T+00h 09m",
+          "peak_flood_depth_m": 19.22,
+          "peak_flow_velocity_mps": 17.0,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 5,
+          "station_name": "Dhake Village / Bridge",
+          "distance_downstream_km": 14.5,
+          "latitude": 30.518,
+          "longitude": 79.605,
+          "riverbed_elevation_m": 1600,
+          "station_type": "village",
+          "population_exposed": 650,
+          "sph_wave_arrival_hr": 0.22,
+          "delft3d_wave_arrival_hr": 0.2,
+          "evacuation_deadline": "T+00h 13m",
+          "peak_flood_depth_m": 15.52,
+          "peak_flow_velocity_mps": 15.02,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 6,
+          "station_name": "Helang Barrage / Access Road",
+          "distance_downstream_km": 20.2,
+          "latitude": 30.535,
+          "longitude": 79.578,
+          "riverbed_elevation_m": 1490,
+          "station_type": "infrastructure",
+          "population_exposed": 820,
+          "sph_wave_arrival_hr": 0.31,
+          "delft3d_wave_arrival_hr": 0.28,
+          "evacuation_deadline": "T+00h 19m",
+          "peak_flood_depth_m": 11.98,
+          "peak_flow_velocity_mps": 12.93,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 7,
+          "station_name": "Vishnuprayag Confluence (Alaknanda)",
+          "distance_downstream_km": 26.0,
+          "latitude": 30.558,
+          "longitude": 79.562,
+          "riverbed_elevation_m": 1380,
+          "station_type": "confluence",
+          "population_exposed": 1500,
+          "sph_wave_arrival_hr": 0.4,
+          "delft3d_wave_arrival_hr": 0.36,
+          "evacuation_deadline": "T+00h 24m",
+          "peak_flood_depth_m": 9.2,
+          "peak_flow_velocity_mps": 11.1,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 8,
+          "station_name": "Joshimath Outskirts Gauging Station",
+          "distance_downstream_km": 32.5,
+          "latitude": 30.562,
+          "longitude": 79.535,
+          "riverbed_elevation_m": 1280,
+          "station_type": "town",
+          "population_exposed": 4500,
+          "sph_wave_arrival_hr": 0.5,
+          "delft3d_wave_arrival_hr": 0.44,
+          "evacuation_deadline": "T+00h 30m",
+          "peak_flood_depth_m": 6.85,
+          "peak_flow_velocity_mps": 9.35,
+          "danger_classification": "High Danger"
+        }
+      ],
+      "safe_havens_evacuation_shelters": [
+        {
+          "shelter_index": 1,
+          "shelter_name": "Raini Upper Ridge Disaster Shelter",
+          "latitude": 30.487,
+          "longitude": 79.663,
+          "absolute_elevation_m": 2050,
+          "elevation_above_river_m": 200,
+          "shelter_capacity_persons": 500,
+          "shelter_type": "high_ground_shelter",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 2,
+          "shelter_name": "Tapovan High-Ground NDRF Staging Base",
+          "latitude": 30.509,
+          "longitude": 79.633,
+          "absolute_elevation_m": 1910,
+          "elevation_above_river_m": 190,
+          "shelter_capacity_persons": 850,
+          "shelter_type": "ndrf_base",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 3,
+          "shelter_name": "Helang Bypass High-Ground Assembly Point",
+          "latitude": 30.539,
+          "longitude": 79.572,
+          "absolute_elevation_m": 1650,
+          "elevation_above_river_m": 160,
+          "shelter_capacity_persons": 1200,
+          "shelter_type": "relief_camp",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 4,
+          "shelter_name": "Joshimath Cantonment Relief Center",
+          "latitude": 30.569,
+          "longitude": 79.541,
+          "absolute_elevation_m": 1890,
+          "elevation_above_river_m": 610,
+          "shelter_capacity_persons": 5000,
+          "shelter_type": "hospital_safe_haven",
+          "operational_status": "SAFE HAVEN"
+        }
+      ]
+    },
+    {
+      "id": "subansiri",
+      "name": "Subansiri Lower Hydroelectric Project",
+      "river": "Subansiri (Brahmaputra Basin)",
+      "state": "Arunachal Pradesh / Assam",
+      "coordinates": {
+        "latitude": 27.5539,
+        "longitude": 94.2592,
+        "crest_elevation_m": 210
+      },
+      "structural_parameters": {
+        "dam_height_m": 116.0,
+        "water_head_at_failure_m": 95.0,
+        "reservoir_volume_mcm": 450.0,
+        "reservoir_volume_m3": 450000000.0,
+        "failure_mode": "overtopping",
+        "failure_mode_description": "Water overflows dam crest, progressive hydraulic erosion (kO=1.3, z=1.0)",
+        "channel_bed_slope_m_per_m": 0.0018,
+        "mannings_roughness_n": 0.032,
+        "reach_total_length_km": 62.0
+      },
+      "historical_context": "Massive concrete gravity dam on Subansiri River near Gerukamukh on Assam-Arunachal border. Downstream impacts flat floodplain of Dhemaji and Lakhimpur districts.",
+      "froehlich_breach_hydrodynamics": {
+        "average_breach_width_m": 247.43,
+        "breach_side_slope_z": 1.0,
+        "time_to_failure_hr": 1.25,
+        "time_to_failure_min": 75.0,
+        "peak_outflow_discharge_m3s": 742743.4,
+        "total_volume_released_mcm": 439.74,
+        "total_volume_released_m3": 439740000.0
+      },
+      "hydraulic_celerity_and_velocity": {
+        "sph_near_field_jet_velocity_mps": 22.0,
+        "delft3d_wave_celerity_mps": 20.3,
+        "delft3d_mean_manning_velocity_mps": 14.0
+      },
+      "hadr_summary": {
+        "total_population_at_risk": 67200,
+        "bridges_infrastructure_threatened": 1,
+        "settlements_threatened": 3,
+        "est_agricultural_loss_ha": 16389.0,
+        "est_economic_exposure_inr_crores": 892.5,
+        "emergency_protocols": [
+          "Issue immediate Level-3 Flash Flood Red Alert to downstream district collectors.",
+          "Evacuate all settlements within 0-10 km zone (lead time under 45 minutes).",
+          "Shutdown downstream hydel power intakes and secure electrical substations.",
+          "Deploy National Disaster Response Force (NDRF) boats at designated staging ghats.",
+          "Establish relief centers at elevations at least 20m above current river water line."
+        ]
+      },
+      "downstream_reach_stations": [
+        {
+          "station_index": 1,
+          "station_name": "Subansiri Dam Axis",
+          "distance_downstream_km": 0.0,
+          "latitude": 27.5539,
+          "longitude": 94.2592,
+          "riverbed_elevation_m": 210,
+          "station_type": "dam",
+          "population_exposed": 0,
+          "sph_wave_arrival_hr": 0.0,
+          "delft3d_wave_arrival_hr": 0.0,
+          "evacuation_deadline": "T+00h 00m",
+          "peak_flood_depth_m": 95.0,
+          "peak_flow_velocity_mps": 22.0,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 2,
+          "station_name": "Gerukamukh Base Camp",
+          "distance_downstream_km": 4.5,
+          "latitude": 27.525,
+          "longitude": 94.272,
+          "riverbed_elevation_m": 165,
+          "station_type": "settlement",
+          "population_exposed": 1200,
+          "sph_wave_arrival_hr": 0.07,
+          "delft3d_wave_arrival_hr": 0.06,
+          "evacuation_deadline": "T+00h 04m",
+          "peak_flood_depth_m": 77.43,
+          "peak_flow_velocity_mps": 19.54,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 3,
+          "station_name": "Chauldhowa Ghat Bridge",
+          "distance_downstream_km": 12.0,
+          "latitude": 27.472,
+          "longitude": 94.305,
+          "riverbed_elevation_m": 130,
+          "station_type": "infrastructure",
+          "population_exposed": 2100,
+          "sph_wave_arrival_hr": 0.18,
+          "delft3d_wave_arrival_hr": 0.16,
+          "evacuation_deadline": "T+00h 11m",
+          "peak_flood_depth_m": 55.06,
+          "peak_flow_velocity_mps": 16.04,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 4,
+          "station_name": "Gogamukh Flood Sector",
+          "distance_downstream_km": 22.0,
+          "latitude": 27.41,
+          "longitude": 94.335,
+          "riverbed_elevation_m": 110,
+          "station_type": "town",
+          "population_exposed": 8500,
+          "sph_wave_arrival_hr": 0.34,
+          "delft3d_wave_arrival_hr": 0.3,
+          "evacuation_deadline": "T+00h 20m",
+          "peak_flood_depth_m": 34.95,
+          "peak_flow_velocity_mps": 12.33,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 5,
+          "station_name": "Ghilamara Alluvial Reach",
+          "distance_downstream_km": 35.0,
+          "latitude": 27.325,
+          "longitude": 94.38,
+          "riverbed_elevation_m": 95,
+          "station_type": "town",
+          "population_exposed": 12400,
+          "sph_wave_arrival_hr": 0.54,
+          "delft3d_wave_arrival_hr": 0.48,
+          "evacuation_deadline": "T+00h 32m",
+          "peak_flood_depth_m": 19.36,
+          "peak_flow_velocity_mps": 8.76,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 6,
+          "station_name": "North Lakhimpur Rural Belt",
+          "distance_downstream_km": 48.0,
+          "latitude": 27.24,
+          "longitude": 94.28,
+          "riverbed_elevation_m": 88,
+          "station_type": "town",
+          "population_exposed": 28000,
+          "sph_wave_arrival_hr": 0.74,
+          "delft3d_wave_arrival_hr": 0.66,
+          "evacuation_deadline": "T+00h 44m",
+          "peak_flood_depth_m": 10.72,
+          "peak_flow_velocity_mps": 6.22,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 7,
+          "station_name": "Brahmaputra Confluence Outflow",
+          "distance_downstream_km": 62.0,
+          "latitude": 27.15,
+          "longitude": 94.18,
+          "riverbed_elevation_m": 82,
+          "station_type": "confluence",
+          "population_exposed": 15000,
+          "sph_wave_arrival_hr": 0.95,
+          "delft3d_wave_arrival_hr": 0.85,
+          "evacuation_deadline": "T+00h 57m",
+          "peak_flood_depth_m": 5.67,
+          "peak_flow_velocity_mps": 4.3,
+          "danger_classification": "High Danger"
+        }
+      ],
+      "safe_havens_evacuation_shelters": [
+        {
+          "shelter_index": 1,
+          "shelter_name": "Gerukamukh Army Camp Ridge Shelter",
+          "latitude": 27.531,
+          "longitude": 94.262,
+          "absolute_elevation_m": 260,
+          "elevation_above_river_m": 95,
+          "shelter_capacity_persons": 2500,
+          "shelter_type": "military_shelter",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 2,
+          "shelter_name": "Chauldhowa High-Mound Evacuation Post",
+          "latitude": 27.479,
+          "longitude": 94.296,
+          "absolute_elevation_m": 160,
+          "elevation_above_river_m": 30,
+          "shelter_capacity_persons": 1800,
+          "shelter_type": "relief_camp",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 3,
+          "shelter_name": "Gogamukh High School Raised Platform",
+          "latitude": 27.418,
+          "longitude": 94.342,
+          "absolute_elevation_m": 140,
+          "elevation_above_river_m": 30,
+          "shelter_capacity_persons": 3500,
+          "shelter_type": "high_ground_shelter",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 4,
+          "shelter_name": "North Lakhimpur Sports Stadium Relief Hub",
+          "latitude": 27.248,
+          "longitude": 94.271,
+          "absolute_elevation_m": 115,
+          "elevation_above_river_m": 27,
+          "shelter_capacity_persons": 6000,
+          "shelter_type": "district_relief_camp",
+          "operational_status": "SAFE HAVEN"
+        }
+      ]
+    },
+    {
+      "id": "tehri",
+      "name": "Tehri Dam",
+      "river": "Bhagirathi River",
+      "state": "Uttarakhand",
+      "coordinates": {
+        "latitude": 30.3781,
+        "longitude": 78.4803,
+        "crest_elevation_m": 830
+      },
+      "structural_parameters": {
+        "dam_height_m": 260.5,
+        "water_head_at_failure_m": 235.0,
+        "reservoir_volume_mcm": 350.0,
+        "reservoir_volume_m3": 350000000.0,
+        "failure_mode": "piping",
+        "failure_mode_description": "Internal seepage piping and structural cavity enlargement (kO=1.0, z=0.9)",
+        "channel_bed_slope_m_per_m": 0.009,
+        "mannings_roughness_n": 0.038,
+        "reach_total_length_km": 70.0
+      },
+      "historical_context": "Highest dam in India (260.5m) and one of the highest in the world. Embankment earth and rock-fill dam controlling Bhagirathi River upstream of Devprayag and Rishikesh.",
+      "froehlich_breach_hydrodynamics": {
+        "average_breach_width_m": 182.1,
+        "breach_side_slope_z": 0.9,
+        "time_to_failure_hr": 0.45,
+        "time_to_failure_min": 27.0,
+        "peak_outflow_discharge_m3s": 4175130.6,
+        "total_volume_released_mcm": 336.84,
+        "total_volume_released_m3": 336840000.0
+      },
+      "hydraulic_celerity_and_velocity": {
+        "sph_near_field_jet_velocity_mps": 22.0,
+        "delft3d_wave_celerity_mps": 20.3,
+        "delft3d_mean_manning_velocity_mps": 14.0
+      },
+      "hadr_summary": {
+        "total_population_at_risk": 81550,
+        "bridges_infrastructure_threatened": 2,
+        "settlements_threatened": 2,
+        "est_agricultural_loss_ha": 16261.0,
+        "est_economic_exposure_inr_crores": 745.0,
+        "emergency_protocols": [
+          "Issue immediate Level-3 Flash Flood Red Alert to downstream district collectors.",
+          "Evacuate all settlements within 0-10 km zone (lead time under 45 minutes).",
+          "Shutdown downstream hydel power intakes and secure electrical substations.",
+          "Deploy National Disaster Response Force (NDRF) boats at designated staging ghats.",
+          "Establish relief centers at elevations at least 20m above current river water line."
+        ]
+      },
+      "downstream_reach_stations": [
+        {
+          "station_index": 1,
+          "station_name": "Tehri Dam Spillway & Axis",
+          "distance_downstream_km": 0.0,
+          "latitude": 30.3781,
+          "longitude": 78.4803,
+          "riverbed_elevation_m": 830,
+          "station_type": "dam",
+          "population_exposed": 0,
+          "sph_wave_arrival_hr": 0.0,
+          "delft3d_wave_arrival_hr": 0.0,
+          "evacuation_deadline": "T+00h 00m",
+          "peak_flood_depth_m": 235.0,
+          "peak_flow_velocity_mps": 22.0,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 2,
+          "station_name": "Koteshwar Dam Reservoir",
+          "distance_downstream_km": 7.5,
+          "latitude": 30.295,
+          "longitude": 78.498,
+          "riverbed_elevation_m": 690,
+          "station_type": "infrastructure",
+          "population_exposed": 950,
+          "sph_wave_arrival_hr": 0.12,
+          "delft3d_wave_arrival_hr": 0.1,
+          "evacuation_deadline": "T+00h 07m",
+          "peak_flood_depth_m": 167.11,
+          "peak_flow_velocity_mps": 18.06,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 3,
+          "station_name": "Srikot River Crossing",
+          "distance_downstream_km": 18.0,
+          "latitude": 30.22,
+          "longitude": 78.54,
+          "riverbed_elevation_m": 580,
+          "station_type": "bridge",
+          "population_exposed": 1800,
+          "sph_wave_arrival_hr": 0.28,
+          "delft3d_wave_arrival_hr": 0.25,
+          "evacuation_deadline": "T+00h 17m",
+          "peak_flood_depth_m": 103.69,
+          "peak_flow_velocity_mps": 13.7,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 4,
+          "station_name": "Devprayag (Bhagirathi + Alaknanda Confluence)",
+          "distance_downstream_km": 29.0,
+          "latitude": 30.145,
+          "longitude": 78.599,
+          "riverbed_elevation_m": 470,
+          "station_type": "confluence",
+          "population_exposed": 9200,
+          "sph_wave_arrival_hr": 0.45,
+          "delft3d_wave_arrival_hr": 0.4,
+          "evacuation_deadline": "T+00h 27m",
+          "peak_flood_depth_m": 62.89,
+          "peak_flow_velocity_mps": 10.26,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 5,
+          "station_name": "Byasi Canyon Gorge",
+          "distance_downstream_km": 42.0,
+          "latitude": 30.088,
+          "longitude": 78.485,
+          "riverbed_elevation_m": 410,
+          "station_type": "settlement",
+          "population_exposed": 1400,
+          "sph_wave_arrival_hr": 0.65,
+          "delft3d_wave_arrival_hr": 0.57,
+          "evacuation_deadline": "T+00h 39m",
+          "peak_flood_depth_m": 34.83,
+          "peak_flow_velocity_mps": 7.28,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 6,
+          "station_name": "Shivpuri Rafting Hub",
+          "distance_downstream_km": 56.0,
+          "latitude": 30.132,
+          "longitude": 78.385,
+          "riverbed_elevation_m": 360,
+          "station_type": "village",
+          "population_exposed": 3200,
+          "sph_wave_arrival_hr": 0.86,
+          "delft3d_wave_arrival_hr": 0.77,
+          "evacuation_deadline": "T+00h 52m",
+          "peak_flood_depth_m": 18.43,
+          "peak_flow_velocity_mps": 5.04,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 7,
+          "station_name": "Rishikesh Barrage & Urban Plains",
+          "distance_downstream_km": 70.0,
+          "latitude": 30.11,
+          "longitude": 78.3,
+          "riverbed_elevation_m": 330,
+          "station_type": "city",
+          "population_exposed": 65000,
+          "sph_wave_arrival_hr": 1.08,
+          "delft3d_wave_arrival_hr": 0.96,
+          "evacuation_deadline": "T+01h 05m",
+          "peak_flood_depth_m": 9.75,
+          "peak_flow_velocity_mps": 3.49,
+          "danger_classification": "High Danger"
+        }
+      ],
+      "safe_havens_evacuation_shelters": [
+        {
+          "shelter_index": 1,
+          "shelter_name": "New Tehri Hilltop Administrative Relief Center",
+          "latitude": 30.392,
+          "longitude": 78.471,
+          "absolute_elevation_m": 1750,
+          "elevation_above_river_m": 920,
+          "shelter_capacity_persons": 15000,
+          "shelter_type": "district_relief_camp",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 2,
+          "shelter_name": "Koteshwar Left Ridge Safe Haven Camp",
+          "latitude": 30.301,
+          "longitude": 78.491,
+          "absolute_elevation_m": 820,
+          "elevation_above_river_m": 130,
+          "shelter_capacity_persons": 2000,
+          "shelter_type": "relief_camp",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 3,
+          "shelter_name": "Devprayag Sangam Upper Temple Plateau",
+          "latitude": 30.151,
+          "longitude": 78.591,
+          "absolute_elevation_m": 580,
+          "elevation_above_river_m": 110,
+          "shelter_capacity_persons": 4000,
+          "shelter_type": "safe_assembly",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 4,
+          "shelter_name": "Rishikesh AIIMS High Ground Evacuation Base",
+          "latitude": 30.082,
+          "longitude": 78.291,
+          "absolute_elevation_m": 390,
+          "elevation_above_river_m": 60,
+          "shelter_capacity_persons": 12000,
+          "shelter_type": "hospital_safe_haven",
+          "operational_status": "SAFE HAVEN"
+        }
+      ]
+    },
+    {
+      "id": "mullaperiyar",
+      "name": "Mullaperiyar Dam",
+      "river": "Periyar River",
+      "state": "Kerala / Tamil Nadu",
+      "coordinates": {
+        "latitude": 9.5292,
+        "longitude": 77.1428,
+        "crest_elevation_m": 880
+      },
+      "structural_parameters": {
+        "dam_height_m": 53.6,
+        "water_head_at_failure_m": 43.0,
+        "reservoir_volume_mcm": 150.0,
+        "reservoir_volume_m3": 150000000.0,
+        "failure_mode": "overtopping",
+        "failure_mode_description": "Water overflows dam crest, progressive hydraulic erosion (kO=1.3, z=1.0)",
+        "channel_bed_slope_m_per_m": 0.008,
+        "mannings_roughness_n": 0.04,
+        "reach_total_length_km": 39.0
+      },
+      "historical_context": "Historic 128-year-old composite gravity dam in Western Ghats. Inundation modeling is of immense public safety and disaster relief significance for downstream Idukki district.",
+      "froehlich_breach_hydrodynamics": {
+        "average_breach_width_m": 168.65,
+        "breach_side_slope_z": 1.0,
+        "time_to_failure_hr": 1.6,
+        "time_to_failure_min": 96.0,
+        "peak_outflow_discharge_m3s": 129537.0,
+        "total_volume_released_mcm": 148.49,
+        "total_volume_released_m3": 148490000.0
+      },
+      "hydraulic_celerity_and_velocity": {
+        "sph_near_field_jet_velocity_mps": 22.0,
+        "delft3d_wave_celerity_mps": 20.3,
+        "delft3d_mean_manning_velocity_mps": 14.0
+      },
+      "hadr_summary": {
+        "total_population_at_risk": 48600,
+        "bridges_infrastructure_threatened": 1,
+        "settlements_threatened": 1,
+        "est_agricultural_loss_ha": 8607.0,
+        "est_economic_exposure_inr_crores": 327.5,
+        "emergency_protocols": [
+          "Issue immediate Level-3 Flash Flood Red Alert to downstream district collectors.",
+          "Evacuate all settlements within 0-10 km zone (lead time under 45 minutes).",
+          "Shutdown downstream hydel power intakes and secure electrical substations.",
+          "Deploy National Disaster Response Force (NDRF) boats at designated staging ghats.",
+          "Establish relief centers at elevations at least 20m above current river water line."
+        ]
+      },
+      "downstream_reach_stations": [
+        {
+          "station_index": 1,
+          "station_name": "Mullaperiyar Dam Crest",
+          "distance_downstream_km": 0.0,
+          "latitude": 9.5292,
+          "longitude": 77.1428,
+          "riverbed_elevation_m": 880,
+          "station_type": "dam",
+          "population_exposed": 0,
+          "sph_wave_arrival_hr": 0.0,
+          "delft3d_wave_arrival_hr": 0.0,
+          "evacuation_deadline": "T+00h 00m",
+          "peak_flood_depth_m": 43.0,
+          "peak_flow_velocity_mps": 22.0,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 2,
+          "station_name": "Vallakadavu Settlement",
+          "distance_downstream_km": 3.8,
+          "latitude": 9.552,
+          "longitude": 77.112,
+          "riverbed_elevation_m": 820,
+          "station_type": "settlement",
+          "population_exposed": 3500,
+          "sph_wave_arrival_hr": 0.06,
+          "delft3d_wave_arrival_hr": 0.05,
+          "evacuation_deadline": "T+00h 04m",
+          "peak_flood_depth_m": 36.18,
+          "peak_flow_velocity_mps": 19.91,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 3,
+          "station_name": "Vandiperiyar Bridge & Town",
+          "distance_downstream_km": 8.5,
+          "latitude": 9.575,
+          "longitude": 77.085,
+          "riverbed_elevation_m": 770,
+          "station_type": "town",
+          "population_exposed": 18000,
+          "sph_wave_arrival_hr": 0.13,
+          "delft3d_wave_arrival_hr": 0.12,
+          "evacuation_deadline": "T+00h 08m",
+          "peak_flood_depth_m": 29.22,
+          "peak_flow_velocity_mps": 17.59,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 4,
+          "station_name": "Manjumala Estate Reach",
+          "distance_downstream_km": 18.0,
+          "latitude": 9.64,
+          "longitude": 77.04,
+          "riverbed_elevation_m": 720,
+          "station_type": "settlement",
+          "population_exposed": 6200,
+          "sph_wave_arrival_hr": 0.28,
+          "delft3d_wave_arrival_hr": 0.25,
+          "evacuation_deadline": "T+00h 17m",
+          "peak_flood_depth_m": 18.97,
+          "peak_flow_velocity_mps": 13.7,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 5,
+          "station_name": "Karimban Valley",
+          "distance_downstream_km": 28.5,
+          "latitude": 9.74,
+          "longitude": 76.995,
+          "riverbed_elevation_m": 660,
+          "station_type": "settlement",
+          "population_exposed": 8900,
+          "sph_wave_arrival_hr": 0.44,
+          "delft3d_wave_arrival_hr": 0.39,
+          "evacuation_deadline": "T+00h 26m",
+          "peak_flood_depth_m": 11.77,
+          "peak_flow_velocity_mps": 10.39,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 6,
+          "station_name": "Idukki Arch Dam Reservoir Forebay",
+          "distance_downstream_km": 39.0,
+          "latitude": 9.83,
+          "longitude": 76.955,
+          "riverbed_elevation_m": 610,
+          "station_type": "infrastructure",
+          "population_exposed": 12000,
+          "sph_wave_arrival_hr": 0.6,
+          "delft3d_wave_arrival_hr": 0.53,
+          "evacuation_deadline": "T+00h 36m",
+          "peak_flood_depth_m": 7.3,
+          "peak_flow_velocity_mps": 7.88,
+          "danger_classification": "High Danger"
+        }
+      ],
+      "safe_havens_evacuation_shelters": [
+        {
+          "shelter_index": 1,
+          "shelter_name": "Kumily High Ridge Disaster Relief Shelter",
+          "latitude": 9.605,
+          "longitude": 77.165,
+          "absolute_elevation_m": 1020,
+          "elevation_above_river_m": 140,
+          "shelter_capacity_persons": 6000,
+          "shelter_type": "district_relief_camp",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 2,
+          "shelter_name": "Vandiperiyar Tea Estate Community Hall",
+          "latitude": 9.582,
+          "longitude": 77.085,
+          "absolute_elevation_m": 880,
+          "elevation_above_river_m": 110,
+          "shelter_capacity_persons": 4500,
+          "shelter_type": "relief_camp",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 3,
+          "shelter_name": "Manjumala Forest Reserve Plateau",
+          "latitude": 9.65,
+          "longitude": 77.031,
+          "absolute_elevation_m": 820,
+          "elevation_above_river_m": 100,
+          "shelter_capacity_persons": 2200,
+          "shelter_type": "safe_assembly",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 4,
+          "shelter_name": "Idukki Arch Dam Admin High Ground Shelter",
+          "latitude": 9.845,
+          "longitude": 76.945,
+          "absolute_elevation_m": 740,
+          "elevation_above_river_m": 130,
+          "shelter_capacity_persons": 3500,
+          "shelter_type": "ndrf_base",
+          "operational_status": "SAFE HAVEN"
+        }
+      ]
+    },
+    {
+      "id": "kosi",
+      "name": "Kosi River Embankment (Kusaha Reach)",
+      "river": "Kosi ('Sorrow of Bihar')",
+      "state": "Bihar (Indo-Nepal Border)",
+      "coordinates": {
+        "latitude": 26.5298,
+        "longitude": 86.9387,
+        "crest_elevation_m": 78
+      },
+      "structural_parameters": {
+        "dam_height_m": 12.0,
+        "water_head_at_failure_m": 8.5,
+        "reservoir_volume_mcm": 85.0,
+        "reservoir_volume_m3": 85000000.0,
+        "failure_mode": "piping",
+        "failure_mode_description": "Internal seepage piping and structural cavity enlargement (kO=1.0, z=0.9)",
+        "channel_bed_slope_m_per_m": 0.0006,
+        "mannings_roughness_n": 0.028,
+        "reach_total_length_km": 55.0
+      },
+      "historical_context": "Replicating the devastating 2008 Kosi embankment breach at Kusaha. Wide alluvial flood spread across North Bihar flatlands with massive HADR evacuation requirements.",
+      "froehlich_breach_hydrodynamics": {
+        "average_breach_width_m": 101.38,
+        "breach_side_slope_z": 0.9,
+        "time_to_failure_hr": 5.0,
+        "time_to_failure_min": 300.0,
+        "peak_outflow_discharge_m3s": 5032.4,
+        "total_volume_released_mcm": 62.45,
+        "total_volume_released_m3": 62450000.0
+      },
+      "hydraulic_celerity_and_velocity": {
+        "sph_near_field_jet_velocity_mps": 12.9,
+        "delft3d_wave_celerity_mps": 3.1,
+        "delft3d_mean_manning_velocity_mps": 2.14
+      },
+      "hadr_summary": {
+        "total_population_at_risk": 214200,
+        "bridges_infrastructure_threatened": 1,
+        "settlements_threatened": 4,
+        "est_agricultural_loss_ha": 27276.5,
+        "est_economic_exposure_inr_crores": 248.0,
+        "emergency_protocols": [
+          "Issue immediate Level-3 Flash Flood Red Alert to downstream district collectors.",
+          "Evacuate all settlements within 0-10 km zone (lead time under 45 minutes).",
+          "Shutdown downstream hydel power intakes and secure electrical substations.",
+          "Deploy National Disaster Response Force (NDRF) boats at designated staging ghats.",
+          "Establish relief centers at elevations at least 20m above current river water line."
+        ]
+      },
+      "downstream_reach_stations": [
+        {
+          "station_index": 1,
+          "station_name": "Kusaha Breach Site",
+          "distance_downstream_km": 0.0,
+          "latitude": 26.5298,
+          "longitude": 86.9387,
+          "riverbed_elevation_m": 78,
+          "station_type": "dam",
+          "population_exposed": 0,
+          "sph_wave_arrival_hr": 0.0,
+          "delft3d_wave_arrival_hr": 0.0,
+          "evacuation_deadline": "T+00h 00m",
+          "peak_flood_depth_m": 8.5,
+          "peak_flow_velocity_mps": 12.91,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 2,
+          "station_name": "Bhimnagar Barrage Road",
+          "distance_downstream_km": 5.0,
+          "latitude": 26.502,
+          "longitude": 86.945,
+          "riverbed_elevation_m": 75,
+          "station_type": "infrastructure",
+          "population_exposed": 4200,
+          "sph_wave_arrival_hr": 0.13,
+          "delft3d_wave_arrival_hr": 0.45,
+          "evacuation_deadline": "T+00h 08m",
+          "peak_flood_depth_m": 6.77,
+          "peak_flow_velocity_mps": 11.32,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 3,
+          "station_name": "Pratapganj Sector",
+          "distance_downstream_km": 14.0,
+          "latitude": 26.41,
+          "longitude": 86.88,
+          "riverbed_elevation_m": 70,
+          "station_type": "village",
+          "population_exposed": 15000,
+          "sph_wave_arrival_hr": 0.37,
+          "delft3d_wave_arrival_hr": 1.25,
+          "evacuation_deadline": "T+00h 22m",
+          "peak_flood_depth_m": 4.5,
+          "peak_flow_velocity_mps": 8.93,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 4,
+          "station_name": "Raghopur Rural Inundation",
+          "distance_downstream_km": 26.0,
+          "latitude": 26.27,
+          "longitude": 86.78,
+          "riverbed_elevation_m": 64,
+          "station_type": "town",
+          "population_exposed": 32000,
+          "sph_wave_arrival_hr": 0.68,
+          "delft3d_wave_arrival_hr": 2.33,
+          "evacuation_deadline": "T+00h 41m",
+          "peak_flood_depth_m": 2.61,
+          "peak_flow_velocity_mps": 6.51,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 5,
+          "station_name": "Supaul District Headquarters",
+          "distance_downstream_km": 40.0,
+          "latitude": 26.12,
+          "longitude": 86.62,
+          "riverbed_elevation_m": 58,
+          "station_type": "city",
+          "population_exposed": 68000,
+          "sph_wave_arrival_hr": 1.05,
+          "delft3d_wave_arrival_hr": 3.58,
+          "evacuation_deadline": "T+01h 03m",
+          "peak_flood_depth_m": 1.38,
+          "peak_flow_velocity_mps": 4.51,
+          "danger_classification": "Low Danger"
+        },
+        {
+          "station_index": 6,
+          "station_name": "Madhepura Floodplain Basin",
+          "distance_downstream_km": 55.0,
+          "latitude": 25.92,
+          "longitude": 86.79,
+          "riverbed_elevation_m": 51,
+          "station_type": "city",
+          "population_exposed": 95000,
+          "sph_wave_arrival_hr": 1.44,
+          "delft3d_wave_arrival_hr": 4.92,
+          "evacuation_deadline": "T+01h 26m",
+          "peak_flood_depth_m": 1.2,
+          "peak_flow_velocity_mps": 3.04,
+          "danger_classification": "Low Danger"
+        }
+      ],
+      "safe_havens_evacuation_shelters": [
+        {
+          "shelter_index": 1,
+          "shelter_name": "Bhimnagar Border Outpost Raised Mound",
+          "latitude": 26.541,
+          "longitude": 86.945,
+          "absolute_elevation_m": 95,
+          "elevation_above_river_m": 20,
+          "shelter_capacity_persons": 5000,
+          "shelter_type": "raised_mound_shelter",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 2,
+          "shelter_name": "Pratapganj High School Flood Shelter Platform",
+          "latitude": 26.295,
+          "longitude": 86.995,
+          "absolute_elevation_m": 86,
+          "elevation_above_river_m": 16,
+          "shelter_capacity_persons": 7500,
+          "shelter_type": "high_ground_shelter",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 3,
+          "shelter_name": "Raghopur Central Flood Relief Mound",
+          "latitude": 26.275,
+          "longitude": 86.765,
+          "absolute_elevation_m": 80,
+          "elevation_above_river_m": 16,
+          "shelter_capacity_persons": 9000,
+          "shelter_type": "raised_mound_shelter",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 4,
+          "shelter_name": "Supaul Multi-Purpose Cyclone & Flood Stadium",
+          "latitude": 26.115,
+          "longitude": 86.612,
+          "absolute_elevation_m": 75,
+          "elevation_above_river_m": 17,
+          "shelter_capacity_persons": 15000,
+          "shelter_type": "district_relief_camp",
+          "operational_status": "SAFE HAVEN"
+        }
+      ]
+    },
+    {
+      "id": "phuktal",
+      "name": "Phuktal River Landslide Dam (Zanskar 2015)",
+      "river": "Phuktal / Tsarap Chu (Indus Basin)",
+      "state": "Ladakh / Jammu & Kashmir",
+      "coordinates": {
+        "latitude": 33.2685,
+        "longitude": 77.165,
+        "crest_elevation_m": 3850
+      },
+      "structural_parameters": {
+        "dam_height_m": 60.0,
+        "water_head_at_failure_m": 52.0,
+        "reservoir_volume_mcm": 24.0,
+        "reservoir_volume_m3": 24000000.0,
+        "failure_mode": "landslide_breach",
+        "failure_mode_description": "Massive rock/ice avalanche dam impoundment and sudden outburst (kO=1.3, z=1.0)",
+        "channel_bed_slope_m_per_m": 0.022,
+        "mannings_roughness_n": 0.048,
+        "reach_total_length_km": 42.0
+      },
+      "historical_context": "Replicates the March-May 2015 landslide damming of Phuktal River near Sumdo. Catastrophic breach formed high-velocity flash flood waves wiping out bridges, schools, and army camps down to Padum.",
+      "froehlich_breach_hydrodynamics": {
+        "average_breach_width_m": 94.54,
+        "breach_side_slope_z": 1.0,
+        "time_to_failure_hr": 0.53,
+        "time_to_failure_min": 31.8,
+        "peak_outflow_discharge_m3s": 138573.4,
+        "total_volume_released_mcm": 23.88,
+        "total_volume_released_m3": 23880000.0
+      },
+      "hydraulic_celerity_and_velocity": {
+        "sph_near_field_jet_velocity_mps": 22.0,
+        "delft3d_wave_celerity_mps": 20.3,
+        "delft3d_mean_manning_velocity_mps": 14.0
+      },
+      "hadr_summary": {
+        "total_population_at_risk": 5340,
+        "bridges_infrastructure_threatened": 1,
+        "settlements_threatened": 2,
+        "est_agricultural_loss_ha": 1084.8,
+        "est_economic_exposure_inr_crores": 113.2,
+        "emergency_protocols": [
+          "Issue immediate Level-3 Flash Flood Red Alert to downstream district collectors.",
+          "Evacuate all settlements within 0-10 km zone (lead time under 45 minutes).",
+          "Shutdown downstream hydel power intakes and secure electrical substations.",
+          "Deploy National Disaster Response Force (NDRF) boats at designated staging ghats.",
+          "Establish relief centers at elevations at least 20m above current river water line."
+        ]
+      },
+      "downstream_reach_stations": [
+        {
+          "station_index": 1,
+          "station_name": "Sumdo Landslide Dam Axis",
+          "distance_downstream_km": 0.0,
+          "latitude": 33.2685,
+          "longitude": 77.165,
+          "riverbed_elevation_m": 3850,
+          "station_type": "dam",
+          "population_exposed": 0,
+          "sph_wave_arrival_hr": 0.0,
+          "delft3d_wave_arrival_hr": 0.0,
+          "evacuation_deadline": "T+00h 00m",
+          "peak_flood_depth_m": 52.0,
+          "peak_flow_velocity_mps": 22.0,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 2,
+          "station_name": "Phuktal Gompa Gorge Bridge",
+          "distance_downstream_km": 7.5,
+          "latitude": 33.285,
+          "longitude": 77.12,
+          "riverbed_elevation_m": 3720,
+          "station_type": "bridge",
+          "population_exposed": 120,
+          "sph_wave_arrival_hr": 0.12,
+          "delft3d_wave_arrival_hr": 0.1,
+          "evacuation_deadline": "T+00h 07m",
+          "peak_flood_depth_m": 36.98,
+          "peak_flow_velocity_mps": 18.06,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 3,
+          "station_name": "Cha Village Sector",
+          "distance_downstream_km": 18.0,
+          "latitude": 33.35,
+          "longitude": 77.01,
+          "riverbed_elevation_m": 3610,
+          "station_type": "village",
+          "population_exposed": 340,
+          "sph_wave_arrival_hr": 0.28,
+          "delft3d_wave_arrival_hr": 0.25,
+          "evacuation_deadline": "T+00h 17m",
+          "peak_flood_depth_m": 22.94,
+          "peak_flow_velocity_mps": 13.7,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 4,
+          "station_name": "Anmu / Purne Confluence",
+          "distance_downstream_km": 29.0,
+          "latitude": 33.4,
+          "longitude": 76.96,
+          "riverbed_elevation_m": 3560,
+          "station_type": "confluence",
+          "population_exposed": 680,
+          "sph_wave_arrival_hr": 0.45,
+          "delft3d_wave_arrival_hr": 0.4,
+          "evacuation_deadline": "T+00h 27m",
+          "peak_flood_depth_m": 13.92,
+          "peak_flow_velocity_mps": 10.26,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 5,
+          "station_name": "Padum District HQ & Pipiting Bridge",
+          "distance_downstream_km": 42.0,
+          "latitude": 33.465,
+          "longitude": 76.885,
+          "riverbed_elevation_m": 3520,
+          "station_type": "town",
+          "population_exposed": 4200,
+          "sph_wave_arrival_hr": 0.65,
+          "delft3d_wave_arrival_hr": 0.57,
+          "evacuation_deadline": "T+00h 39m",
+          "peak_flood_depth_m": 7.71,
+          "peak_flow_velocity_mps": 7.28,
+          "danger_classification": "High Danger"
+        }
+      ],
+      "safe_havens_evacuation_shelters": [
+        {
+          "shelter_index": 1,
+          "shelter_name": "Cha Upper Mountain Ridge Shelter",
+          "latitude": 33.358,
+          "longitude": 77.002,
+          "absolute_elevation_m": 3780,
+          "elevation_above_river_m": 170,
+          "shelter_capacity_persons": 1200,
+          "shelter_type": "high_ground_shelter",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 2,
+          "shelter_name": "Purne High-Plateau Military Staging Base",
+          "latitude": 33.409,
+          "longitude": 76.952,
+          "absolute_elevation_m": 3690,
+          "elevation_above_river_m": 130,
+          "shelter_capacity_persons": 2500,
+          "shelter_type": "ndrf_base",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 3,
+          "shelter_name": "Padum District Sports Stadium Relief Haven",
+          "latitude": 33.472,
+          "longitude": 76.879,
+          "absolute_elevation_m": 3610,
+          "elevation_above_river_m": 90,
+          "shelter_capacity_persons": 5500,
+          "shelter_type": "district_relief_camp",
+          "operational_status": "SAFE HAVEN"
+        }
+      ]
+    },
+    {
+      "id": "wapriyang",
+      "name": "Wapriyang River Blockage (Arunachal 2021)",
+      "river": "Wapriyang / Siang Basin",
+      "state": "Arunachal Pradesh",
+      "coordinates": {
+        "latitude": 28.485,
+        "longitude": 94.882,
+        "crest_elevation_m": 740
+      },
+      "structural_parameters": {
+        "dam_height_m": 45.0,
+        "water_head_at_failure_m": 38.0,
+        "reservoir_volume_mcm": 18.0,
+        "reservoir_volume_m3": 18000000.0,
+        "failure_mode": "landslide_breach",
+        "failure_mode_description": "Massive rock/ice avalanche dam impoundment and sudden outburst (kO=1.3, z=1.0)",
+        "channel_bed_slope_m_per_m": 0.02,
+        "mannings_roughness_n": 0.042,
+        "reach_total_length_km": 45.0
+      },
+      "historical_context": "Site of the Nov 2021 landslide dam formation in Arunachal Pradesh which caused emergency flash flood alerts across downstream Siang and Brahmaputra valleys.",
+      "froehlich_breach_hydrodynamics": {
+        "average_breach_width_m": 85.15,
+        "breach_side_slope_z": 1.0,
+        "time_to_failure_hr": 0.63,
+        "time_to_failure_min": 37.8,
+        "peak_outflow_discharge_m3s": 69657.0,
+        "total_volume_released_mcm": 17.03,
+        "total_volume_released_m3": 17030000.0
+      },
+      "hydraulic_celerity_and_velocity": {
+        "sph_near_field_jet_velocity_mps": 22.0,
+        "delft3d_wave_celerity_mps": 20.3,
+        "delft3d_mean_manning_velocity_mps": 14.0
+      },
+      "hadr_summary": {
+        "total_population_at_risk": 35250,
+        "bridges_infrastructure_threatened": 2,
+        "settlements_threatened": 2,
+        "est_agricultural_loss_ha": 4563.0,
+        "est_economic_exposure_inr_crores": 147.4,
+        "emergency_protocols": [
+          "Issue immediate Level-3 Flash Flood Red Alert to downstream district collectors.",
+          "Evacuate all settlements within 0-10 km zone (lead time under 45 minutes).",
+          "Shutdown downstream hydel power intakes and secure electrical substations.",
+          "Deploy National Disaster Response Force (NDRF) boats at designated staging ghats.",
+          "Establish relief centers at elevations at least 20m above current river water line."
+        ]
+      },
+      "downstream_reach_stations": [
+        {
+          "station_index": 1,
+          "station_name": "Wapriyang Landslide Axis",
+          "distance_downstream_km": 0.0,
+          "latitude": 28.485,
+          "longitude": 94.882,
+          "riverbed_elevation_m": 740,
+          "station_type": "dam",
+          "population_exposed": 0,
+          "sph_wave_arrival_hr": 0.0,
+          "delft3d_wave_arrival_hr": 0.0,
+          "evacuation_deadline": "T+00h 00m",
+          "peak_flood_depth_m": 38.0,
+          "peak_flow_velocity_mps": 22.0,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 2,
+          "station_name": "Upper Siang Gorge Crossing",
+          "distance_downstream_km": 6.5,
+          "latitude": 28.44,
+          "longitude": 94.92,
+          "riverbed_elevation_m": 610,
+          "station_type": "bridge",
+          "population_exposed": 350,
+          "sph_wave_arrival_hr": 0.1,
+          "delft3d_wave_arrival_hr": 0.09,
+          "evacuation_deadline": "T+00h 06m",
+          "peak_flood_depth_m": 28.28,
+          "peak_flow_velocity_mps": 18.54,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 3,
+          "station_name": "Yingkiong Suspension Bridge",
+          "distance_downstream_km": 15.0,
+          "latitude": 28.38,
+          "longitude": 94.98,
+          "riverbed_elevation_m": 480,
+          "station_type": "infrastructure",
+          "population_exposed": 2100,
+          "sph_wave_arrival_hr": 0.23,
+          "delft3d_wave_arrival_hr": 0.21,
+          "evacuation_deadline": "T+00h 14m",
+          "peak_flood_depth_m": 19.22,
+          "peak_flow_velocity_mps": 14.82,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 4,
+          "station_name": "Tuting-Yingkiong Highway Corridor",
+          "distance_downstream_km": 28.0,
+          "latitude": 28.29,
+          "longitude": 95.07,
+          "riverbed_elevation_m": 360,
+          "station_type": "village",
+          "population_exposed": 4800,
+          "sph_wave_arrival_hr": 0.43,
+          "delft3d_wave_arrival_hr": 0.38,
+          "evacuation_deadline": "T+00h 26m",
+          "peak_flood_depth_m": 10.64,
+          "peak_flow_velocity_mps": 10.53,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 5,
+          "station_name": "Pasighat Valley Confluence Reach",
+          "distance_downstream_km": 45.0,
+          "latitude": 28.08,
+          "longitude": 95.33,
+          "riverbed_elevation_m": 240,
+          "station_type": "town",
+          "population_exposed": 28000,
+          "sph_wave_arrival_hr": 0.69,
+          "delft3d_wave_arrival_hr": 0.62,
+          "evacuation_deadline": "T+00h 41m",
+          "peak_flood_depth_m": 4.91,
+          "peak_flow_velocity_mps": 6.73,
+          "danger_classification": "High Danger"
+        }
+      ],
+      "safe_havens_evacuation_shelters": [
+        {
+          "shelter_index": 1,
+          "shelter_name": "Yingkiong High Ridge Administrative Haven",
+          "latitude": 28.391,
+          "longitude": 94.971,
+          "absolute_elevation_m": 640,
+          "elevation_above_river_m": 160,
+          "shelter_capacity_persons": 3000,
+          "shelter_type": "district_relief_camp",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 2,
+          "shelter_name": "Simong Village High-Ground Relief Post",
+          "latitude": 28.305,
+          "longitude": 95.061,
+          "absolute_elevation_m": 510,
+          "elevation_above_river_m": 150,
+          "shelter_capacity_persons": 1800,
+          "shelter_type": "relief_camp",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 3,
+          "shelter_name": "Pasighat Hill Station NDRF Staging Ground",
+          "latitude": 28.092,
+          "longitude": 95.321,
+          "absolute_elevation_m": 370,
+          "elevation_above_river_m": 130,
+          "shelter_capacity_persons": 9000,
+          "shelter_type": "hospital_safe_haven",
+          "operational_status": "SAFE HAVEN"
+        }
+      ]
+    },
+    {
+      "id": "kashmir_jhelum",
+      "name": "Jhelum River Basin / Srinagar Reach (2014 Flood)",
+      "river": "Jhelum River",
+      "state": "Jammu & Kashmir",
+      "coordinates": {
+        "latitude": 33.725,
+        "longitude": 75.148,
+        "crest_elevation_m": 1592
+      },
+      "structural_parameters": {
+        "dam_height_m": 16.0,
+        "water_head_at_failure_m": 13.0,
+        "reservoir_volume_mcm": 135.0,
+        "reservoir_volume_m3": 135000000.0,
+        "failure_mode": "overtopping",
+        "failure_mode_description": "Water overflows dam crest, progressive hydraulic erosion (kO=1.3, z=1.0)",
+        "channel_bed_slope_m_per_m": 0.0008,
+        "mannings_roughness_n": 0.029,
+        "reach_total_length_km": 56.0
+      },
+      "historical_context": "Replicates the catastrophic September 2014 Kashmir Valley flood where massive overtopping of Jhelum embankments inundated Srinagar, Pulwama, and Anantnag under 3-5m of flood water.",
+      "froehlich_breach_hydrodynamics": {
+        "average_breach_width_m": 155.44,
+        "breach_side_slope_z": 1.0,
+        "time_to_failure_hr": 5.0,
+        "time_to_failure_min": 300.0,
+        "peak_outflow_discharge_m3s": 14833.3,
+        "total_volume_released_mcm": 134.83,
+        "total_volume_released_m3": 134830000.0
+      },
+      "hydraulic_celerity_and_velocity": {
+        "sph_near_field_jet_velocity_mps": 16.0,
+        "delft3d_wave_celerity_mps": 4.59,
+        "delft3d_mean_manning_velocity_mps": 3.17
+      },
+      "hadr_summary": {
+        "total_population_at_risk": 299000,
+        "bridges_infrastructure_threatened": 2,
+        "settlements_threatened": 2,
+        "est_agricultural_loss_ha": 38377.5,
+        "est_economic_exposure_inr_crores": 358.0,
+        "emergency_protocols": [
+          "Issue immediate Level-3 Flash Flood Red Alert to downstream district collectors.",
+          "Evacuate all settlements within 0-10 km zone (lead time under 45 minutes).",
+          "Shutdown downstream hydel power intakes and secure electrical substations.",
+          "Deploy National Disaster Response Force (NDRF) boats at designated staging ghats.",
+          "Establish relief centers at elevations at least 20m above current river water line."
+        ]
+      },
+      "downstream_reach_stations": [
+        {
+          "station_index": 1,
+          "station_name": "Sangam Gauging Axis & Embankment",
+          "distance_downstream_km": 0.0,
+          "latitude": 33.725,
+          "longitude": 75.148,
+          "riverbed_elevation_m": 1592,
+          "station_type": "dam",
+          "population_exposed": 0,
+          "sph_wave_arrival_hr": 0.0,
+          "delft3d_wave_arrival_hr": 0.0,
+          "evacuation_deadline": "T+00h 00m",
+          "peak_flood_depth_m": 13.0,
+          "peak_flow_velocity_mps": 15.97,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 2,
+          "station_name": "Awantipora National Highway Corridor",
+          "distance_downstream_km": 8.0,
+          "latitude": 33.82,
+          "longitude": 75.05,
+          "riverbed_elevation_m": 1588,
+          "station_type": "infrastructure",
+          "population_exposed": 16000,
+          "sph_wave_arrival_hr": 0.17,
+          "delft3d_wave_arrival_hr": 0.48,
+          "evacuation_deadline": "T+00h 10m",
+          "peak_flood_depth_m": 9.04,
+          "peak_flow_velocity_mps": 12.94,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 3,
+          "station_name": "Pampore Saffron Belt Settlement",
+          "distance_downstream_km": 18.0,
+          "latitude": 33.95,
+          "longitude": 74.93,
+          "riverbed_elevation_m": 1585,
+          "station_type": "town",
+          "population_exposed": 34000,
+          "sph_wave_arrival_hr": 0.38,
+          "delft3d_wave_arrival_hr": 1.09,
+          "evacuation_deadline": "T+00h 23m",
+          "peak_flood_depth_m": 5.74,
+          "peak_flow_velocity_mps": 9.94,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 4,
+          "station_name": "Srinagar City Center (Lal Chowk / Rajbagh)",
+          "distance_downstream_km": 28.0,
+          "latitude": 34.0836,
+          "longitude": 74.7973,
+          "riverbed_elevation_m": 1582,
+          "station_type": "city",
+          "population_exposed": 185000,
+          "sph_wave_arrival_hr": 0.59,
+          "delft3d_wave_arrival_hr": 1.69,
+          "evacuation_deadline": "T+00h 35m",
+          "peak_flood_depth_m": 3.64,
+          "peak_flow_velocity_mps": 7.64,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 5,
+          "station_name": "Shadipora Confluence (Sindh River Entry)",
+          "distance_downstream_km": 42.0,
+          "latitude": 34.18,
+          "longitude": 74.65,
+          "riverbed_elevation_m": 1578,
+          "station_type": "confluence",
+          "population_exposed": 42000,
+          "sph_wave_arrival_hr": 0.89,
+          "delft3d_wave_arrival_hr": 2.54,
+          "evacuation_deadline": "T+00h 53m",
+          "peak_flood_depth_m": 1.93,
+          "peak_flow_velocity_mps": 5.29,
+          "danger_classification": "High Danger"
+        },
+        {
+          "station_index": 6,
+          "station_name": "Wular Lake Ingress Delta",
+          "distance_downstream_km": 56.0,
+          "latitude": 34.35,
+          "longitude": 74.52,
+          "riverbed_elevation_m": 1575,
+          "station_type": "infrastructure",
+          "population_exposed": 22000,
+          "sph_wave_arrival_hr": 1.19,
+          "delft3d_wave_arrival_hr": 3.39,
+          "evacuation_deadline": "T+01h 11m",
+          "peak_flood_depth_m": 1.2,
+          "peak_flow_velocity_mps": 3.66,
+          "danger_classification": "Low Danger"
+        }
+      ],
+      "safe_havens_evacuation_shelters": [
+        {
+          "shelter_index": 1,
+          "shelter_name": "Awantipora Air Force Station High Plateau",
+          "latitude": 33.831,
+          "longitude": 75.041,
+          "absolute_elevation_m": 1640,
+          "elevation_above_river_m": 52,
+          "shelter_capacity_persons": 8000,
+          "shelter_type": "military_shelter",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 2,
+          "shelter_name": "Shankaracharya Hill Foothills Relief Camp",
+          "latitude": 34.078,
+          "longitude": 74.832,
+          "absolute_elevation_m": 1660,
+          "elevation_above_river_m": 78,
+          "shelter_capacity_persons": 14000,
+          "shelter_type": "high_ground_shelter",
+          "operational_status": "SAFE HAVEN"
+        },
+        {
+          "shelter_index": 3,
+          "shelter_name": "Hari Parbat Fort Relief Assembly Area",
+          "latitude": 34.102,
+          "longitude": 74.815,
+          "absolute_elevation_m": 1655,
+          "elevation_above_river_m": 73,
+          "shelter_capacity_persons": 12000,
+          "shelter_type": "district_relief_camp",
+          "operational_status": "SAFE HAVEN"
+        }
+      ]
+    }
+  ],
+  "national_register_catalog": [
+    {
+      "id": "rishi_ganga",
+      "name": "Rishi Ganga Landslide/Rock Dam",
+      "river": "Rishi Ganga / Dhauliganga",
+      "state": "Uttarakhand",
+      "lat": 30.4905,
+      "lon": 79.6965,
+      "height_m": 35.0,
+      "volume_mcm": 12.5,
+      "type": "Landslide/Ice Dam",
+      "event": "Chamoli Flash Flood (Feb 2021)"
+    },
+    {
+      "id": "phuktal",
+      "name": "Phuktal River Landslide Dam",
+      "river": "Phuktal / Tsarap Chu",
+      "state": "Ladakh (Zanskar)",
+      "lat": 33.2685,
+      "lon": 77.165,
+      "height_m": 60.0,
+      "volume_mcm": 24.0,
+      "type": "Landslide Dam",
+      "event": "Sumdo Landslide Dam Burst (Mar-May 2015)"
+    },
+    {
+      "id": "wapriyang",
+      "name": "Wapriyang River Blockage",
+      "river": "Wapriyang / Siang Basin",
+      "state": "Arunachal Pradesh",
+      "lat": 28.485,
+      "lon": 94.882,
+      "height_m": 45.0,
+      "volume_mcm": 18.0,
+      "type": "Landslide Dam",
+      "event": "Upper Siang Flash Flood Alert (Nov 2021)"
+    },
+    {
+      "id": "kashmir_jhelum",
+      "name": "Jhelum River Valley / Srinagar Reach",
+      "river": "Jhelum River",
+      "state": "Jammu & Kashmir",
+      "lat": 33.725,
+      "lon": 75.148,
+      "height_m": 16.0,
+      "volume_mcm": 135.0,
+      "type": "Embankment / Valley Surge",
+      "event": "Great Kashmir Flood (Sep 2014)"
+    },
+    {
+      "id": "kosi",
+      "name": "Kosi River Embankment (Kusaha)",
+      "river": "Kosi ('Sorrow of Bihar')",
+      "state": "Bihar",
+      "lat": 26.5298,
+      "lon": 86.9387,
+      "height_m": 12.0,
+      "volume_mcm": 85.0,
+      "type": "River Embankment",
+      "event": "Kosi Embankment Avulsion (Aug 2008)"
+    },
+    {
+      "id": "tehri",
+      "name": "Tehri Dam (Highest Dam in India)",
+      "river": "Bhagirathi River",
+      "state": "Uttarakhand",
+      "lat": 30.3781,
+      "lon": 78.4803,
+      "height_m": 260.5,
+      "volume_mcm": 3540.0,
+      "type": "Earth & Rockfill Dam",
+      "event": "CWC NRLD National Critical Infrastructure"
+    },
+    {
+      "id": "subansiri",
+      "name": "Subansiri Lower Hydroelectric Dam",
+      "river": "Subansiri River",
+      "state": "Arunachal Pradesh / Assam",
+      "lat": 27.5539,
+      "lon": 94.2592,
+      "height_m": 116.0,
+      "volume_mcm": 1365.0,
+      "type": "Concrete Gravity Dam",
+      "event": "Major Himalayan Hydro Corridor"
+    },
+    {
+      "id": "mullaperiyar",
+      "name": "Mullaperiyar Dam",
+      "river": "Periyar River",
+      "state": "Kerala / Tamil Nadu",
+      "lat": 9.5292,
+      "lon": 77.1428,
+      "height_m": 53.6,
+      "volume_mcm": 443.0,
+      "type": "Masonry Gravity Dam",
+      "event": "Inter-State Seismic & Public Safety Zone"
+    },
+    {
+      "id": "sardar_sarovar",
+      "name": "Sardar Sarovar Dam",
+      "river": "Narmada River",
+      "state": "Gujarat",
+      "lat": 21.829,
+      "lon": 73.748,
+      "height_m": 163.0,
+      "volume_mcm": 9500.0,
+      "type": "Concrete Gravity Dam",
+      "event": "Largest Dam in Narmada Basin"
+    },
+    {
+      "id": "hirakud",
+      "name": "Hirakud Dam (Longest Earthen Dam)",
+      "river": "Mahanadi River",
+      "state": "Odisha",
+      "lat": 21.57,
+      "lon": 83.87,
+      "height_m": 60.96,
+      "volume_mcm": 5896.0,
+      "type": "Composite Earth & Masonry",
+      "event": "Major Delta Flood Control System"
+    }
+  ]
+}

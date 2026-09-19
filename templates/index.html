@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dam Break Inundation Simulation Platform | NTRO Problem Statement 26161</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Custom Styling -->
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-logo">
+        <i class="bi bi-water text-cyan"></i>
+        <div class="brand-text">
+          <span class="brand-title">HYDRO-BREAK 360</span>
+          <span class="brand-sub">Dam Break Hydrodynamic Inundation Modelling · NTRO ID: 26161</span>
+        </div>
+      </div>
+      <div class="status-pill active-badge">
+        <span class="pulse-dot"></span>
+        <span>SIMULATION ENGINE ONLINE</span>
+      </div>
+    </div>
+    
+    <div class="header-center">
+      <nav class="nav-tabs-bar">
+        <button class="tab-btn active" data-tab="tab-map"><i class="bi bi-map"></i> Flow Simulation Map</button>
+        <button class="tab-btn" data-tab="tab-compare"><i class="bi bi-intersect"></i> SPH vs Delft3D</button>
+        <button class="tab-btn" data-tab="tab-hydrograph"><i class="bi bi-graph-up-arrow"></i> Hydrograph & Profile</button>
+        <button class="tab-btn" data-tab="tab-hadr"><i class="bi bi-shield-exclamation"></i> HADR Loss Assessment</button>
+        <button class="tab-btn" data-tab="tab-gee"><i class="bi bi-satellite"></i> GEE Sentinel-1 SAR</button>
+        <button class="tab-btn" data-tab="tab-export"><i class="bi bi-download"></i> GIS Export (.shp/.kml)</button>
+        <button class="tab-btn" data-tab="tab-catalog"><i class="bi bi-journal-bookmark-fill"></i> India Dam Catalog</button>
+        <button class="tab-btn" data-tab="tab-about"><i class="bi bi-info-circle-fill"></i> About System & Guide</button>
+      </nav>
+    </div>
+    
+    <div class="header-right">
+      <button class="btn btn-outline" id="btn-quick-export" title="Quick Download Shapefile">
+        <i class="bi bi-file-earmark-zip"></i> Export .SHP
+      </button>
+      <button class="btn btn-primary" id="btn-re-run">
+        <i class="bi bi-play-fill"></i> Run Scenario
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="app-body">
+    <!-- Left Sidebar: Parameters & Controls -->
+    <aside class="sidebar-panel" id="sidebar">
+      <div class="panel-section">
+        <div class="section-title">
+          <i class="bi bi-geo-alt-fill text-danger"></i> 1. Select River & Dam Site
+        </div>
+        <select id="preset-selector" class="form-select">
+          <option value="rishi_ganga" selected>Rishi Ganga Rock Dam (Chamoli 2021) - UK</option>
+          <option value="phuktal">Phuktal River Landslide Dam (Zanskar 2015) - Ladakh</option>
+          <option value="wapriyang">Wapriyang River Blockage (Nov 2021) - Arunachal</option>
+          <option value="kashmir_jhelum">Jhelum River Valley / Srinagar (2014 Flood) - J&K</option>
+          <option value="subansiri">Subansiri Lower Hydro Project - Assam/AP</option>
+          <option value="tehri">Tehri Dam (Bhagirathi River) - UK</option>
+          <option value="mullaperiyar">Mullaperiyar Dam (Periyar River) - Kerala/TN</option>
+          <option value="kosi">Kosi River Embankment (Kusaha) - Bihar</option>
+          <option value="custom">⚙️ Custom Dam & River Location</option>
+        </select>
+        <div class="site-desc-box" id="site-description">
+          Site of the Feb 2021 Chamoli flash flood disaster where an avalanche dammed the Rishi Ganga and breached violently.
+        </div>
+      </div>
+
+      <!-- Simulation Scenario Mode: Dam Break vs Water Release -->
+      <div class="panel-section">
+        <div class="section-title">
+          <i class="bi bi-water text-cyan"></i> 2. Simulation Scenario Mode
+        </div>
+        <div class="scenario-toggle-box" style="display: flex; gap: 0.4rem; margin-top: 0.35rem;">
+          <button type="button" class="btn-scenario active" id="btn-mode-dambreak" style="flex: 1; padding: 0.45rem 0.5rem; font-size: 0.78rem; font-weight: 600; border-radius: 6px; border: 1px solid #ef4444; background: rgba(239, 68, 68, 0.15); color: #fca5a5; cursor: pointer;">
+            <i class="bi bi-exclamation-triangle-fill text-danger"></i> Dam Break
+          </button>
+          <button type="button" class="btn-scenario" id="btn-mode-release" style="flex: 1; padding: 0.45rem 0.5rem; font-size: 0.78rem; font-weight: 600; border-radius: 6px; border: 1px solid rgba(6, 182, 212, 0.4); background: rgba(11, 21, 40, 0.6); color: #94a3b8; cursor: pointer;">
+            <i class="bi bi-tsunami text-cyan"></i> Water Release
+          </button>
+        </div>
+        <input type="hidden" id="current-scenario-mode" value="dam_break" />
+      </div>
+
+      <!-- Dam & Hydraulic Parameters -->
+      <div class="panel-section">
+        <div class="section-title">
+          <i class="bi bi-sliders"></i> 3. Structural & Hydraulic Parameters
+        </div>
+        
+        <div class="param-row">
+          <div class="param-label">
+            <span>Dam Structural Height (m)</span>
+            <span class="param-val" id="val-dam-height">35.0 m</span>
+          </div>
+          <input type="range" id="param-dam-height" min="5" max="270" value="35" step="1" class="form-range" />
+        </div>
+
+        <div class="param-row">
+          <div class="param-label">
+            <span>Water Head at Dam (m)</span>
+            <span class="param-val" id="val-water-head">30.0 m</span>
+          </div>
+          <input type="range" id="param-water-head" min="3" max="250" value="30" step="1" class="form-range" />
+        </div>
+
+        <div class="param-row">
+          <div class="param-label">
+            <span>Reservoir Storage Volume (MCM)</span>
+            <span class="param-val" id="val-res-volume">12.5 MCM</span>
+          </div>
+          <input type="range" id="param-res-volume" min="1" max="1200" value="12.5" step="0.5" class="form-range" />
+        </div>
+
+        <div class="param-row" id="row-failure-mode">
+          <label class="param-label">Breach Failure Mechanism</label>
+          <select id="param-failure-mode" class="form-select">
+            <option value="overtopping">Overtopping (Froehlich kO=1.3)</option>
+            <option value="piping">Internal Piping (Froehlich kO=1.0)</option>
+            <option value="landslide_breach">Sudden Landslide / Ice Dam Breach</option>
+          </select>
+        </div>
+
+        <!-- Spillway Radial Gate Parameters (Active in Water Release Mode) -->
+        <div id="spillway-controls-box" style="display: none; background: rgba(6, 182, 212, 0.08); padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(6, 182, 212, 0.3); margin-top: 0.75rem; margin-bottom: 0.75rem;">
+          <div style="font-size: 0.8rem; font-weight: 600; color: #06b6d4; margin-bottom: 0.5rem;">
+            <i class="bi bi-gear-wide-connected"></i> Emergency Radial Gate Controls
+          </div>
+          <div class="param-row">
+            <div class="param-label"><span>Gates Hoisted</span><span class="param-val" id="val-num-gates">4 Gates</span></div>
+            <input type="range" id="param-num-gates" min="1" max="12" value="4" step="1" class="form-range" />
+          </div>
+          <div class="param-row">
+            <div class="param-label"><span>Gate Width Total</span><span class="param-val" id="val-gate-width">50.0 m</span></div>
+            <input type="range" id="param-gate-width" min="10" max="200" value="50" step="5" class="form-range" />
+          </div>
+          <div class="param-row">
+            <div class="param-label"><span>Gate Opening Height</span><span class="param-val" id="val-gate-opening">4.0 m</span></div>
+            <input type="range" id="param-gate-opening" min="0.5" max="12" value="4.0" step="0.5" class="form-range" />
+          </div>
+          <div class="param-row">
+            <div class="param-label"><span>Release Duration</span><span class="param-val" id="val-release-duration">4.0 hr</span></div>
+            <input type="range" id="param-release-duration" min="1" max="8" value="4.0" step="0.5" class="form-range" />
+          </div>
+        </div>
+
+        <div class="param-row">
+          <div class="param-label">
+            <span>Channel Slope (S₀)</span>
+            <span class="param-val" id="val-slope">0.035</span>
+          </div>
+          <input type="range" id="param-slope" min="0.0005" max="0.06" value="0.035" step="0.001" class="form-range" />
+        </div>
+
+        <div class="param-row">
+          <div class="param-label">
+            <span>Bed Roughness (Manning's n)</span>
+            <span class="param-val" id="val-mannings">0.045</span>
+          </div>
+          <input type="range" id="param-mannings" min="0.020" max="0.070" value="0.045" step="0.002" class="form-range" />
+        </div>
+      </div>
+
+      <!-- Custom Dataset Ingestion (Deliverable ii) -->
+      <div class="panel-section">
+        <div class="section-title">
+          <i class="bi bi-cloud-arrow-up-fill text-warning"></i> 4. Ingest Custom Datasets (Deliv. ii)
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.4rem;">
+          <div>
+            <label class="btn btn-outline w-100" for="upload-hydrograph-csv" style="display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; padding: 0.4rem 0.6rem; cursor: pointer;">
+              <span><i class="bi bi-file-earmark-spreadsheet text-cyan"></i> Inflow CSV Hydrograph</span>
+              <span class="badge" style="background: rgba(6, 182, 212, 0.2); font-size: 0.7rem;">Upload</span>
+            </label>
+            <input type="file" id="upload-hydrograph-csv" accept=".csv" style="display: none;" />
+            <div id="status-csv" style="font-size: 0.7rem; color: #94a3b8; margin-top: 2px;">Default: Auto-computed Hydrograph</div>
+          </div>
+
+          <div>
+            <label class="btn btn-outline w-100" for="upload-reach-geojson" style="display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; padding: 0.4rem 0.6rem; cursor: pointer;">
+              <span><i class="bi bi-bezier2 text-warning"></i> River Reach GeoJSON</span>
+              <span class="badge" style="background: rgba(245, 158, 11, 0.2); font-size: 0.7rem;">Upload</span>
+            </label>
+            <input type="file" id="upload-reach-geojson" accept=".geojson,.json" style="display: none;" />
+            <div id="status-geojson" style="font-size: 0.7rem; color: #94a3b8; margin-top: 2px;">Default: Calibrated River Thalweg</div>
+          </div>
+
+          <div>
+            <label class="btn btn-outline w-100" for="upload-dem-tif" style="display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; padding: 0.4rem 0.6rem; cursor: pointer;">
+              <span><i class="bi bi-map-fill text-success"></i> DEM Raster GeoTIFF</span>
+              <span class="badge" style="background: rgba(16, 185, 129, 0.2); font-size: 0.7rem;">Upload</span>
+            </label>
+            <input type="file" id="upload-dem-tif" accept=".tif,.tiff" style="display: none;" />
+            <div id="status-dem" style="font-size: 0.7rem; color: #94a3b8; margin-top: 2px;">Default: SRTM 30m Elevation Grid</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom GPS Coordinates (Enabled when custom is selected) -->
+      <div class="panel-section" id="custom-coords-box" style="display: none;">
+        <div class="section-title">
+          <i class="bi bi-pin-map"></i> Custom Dam Location
+        </div>
+        <div class="grid-2">
+          <div>
+            <label class="input-lbl">Latitude (°N)</label>
+            <input type="number" id="custom-lat" class="form-control" value="30.4905" step="0.0001" />
+          </div>
+          <div>
+            <label class="input-lbl">Longitude (°E)</label>
+            <input type="number" id="custom-lon" class="form-control" value="79.6965" step="0.0001" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Hydrodynamic Display Toggles -->
+      <div class="panel-section">
+        <div class="section-title">
+          <i class="bi bi-layers-half"></i> 3. Simulation Layers
+        </div>
+        <label class="checkbox-label">
+          <input type="checkbox" id="layer-hazard-zones" checked />
+          <span><i class="bi bi-exclamation-triangle-fill text-danger"></i> Hazard Levels (High & Low Danger)</span>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="layer-safe-places" checked />
+          <span><i class="bi bi-shield-fill-check text-success"></i> Safe Places & Relief Shelters</span>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="layer-sph" checked />
+          <span><i class="bi bi-droplet-half text-cyan"></i> SPH Lagrangian Fluid Particles</span>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="layer-delft3d" checked />
+          <span><i class="bi bi-grid-3x3 text-primary"></i> Delft3D Flood Inundation Mesh</span>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="layer-stations" checked />
+          <span><i class="bi bi-geo-alt text-warning"></i> Downstream Settlements & Bridges</span>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="layer-vectors" checked />
+          <span><i class="bi bi-arrow-right text-success"></i> Hydrodynamic Velocity Vectors</span>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="layer-sar" />
+          <span><i class="bi bi-radar text-magenta"></i> Sentinel-1 SAR Water Extent Overlay</span>
+        </label>
+      </div>
+
+      <!-- Base Map Tile Selector -->
+      <div class="panel-section">
+        <div class="section-title">
+          <i class="bi bi-globe-americas"></i> 4. Map Provider Layer
+        </div>
+        <div class="basemap-buttons">
+          <button class="btn-basemap active" data-layer="google-satellite">Google Satellite</button>
+          <button class="btn-basemap" data-layer="google-hybrid">Google Hybrid</button>
+          <button class="btn-basemap" data-layer="google-terrain">Google Terrain</button>
+          <button class="btn-basemap" data-layer="osm">OpenStreetMap</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Content Area -->
+    <main class="main-content">
+      <!-- TAB 1: FLOW SIMULATION MAP (FULLSCREEN WITH HUD) -->
+      <div class="tab-pane active" id="tab-map">
+        <!-- Floating Camera Follow HUD -->
+        <div class="map-floating-hud">
+          <div class="hud-item hud-camera-mode">
+            <button class="btn-hud active" id="btn-toggle-follow" title="Toggle Auto-Follow Camera on Water Flow">
+              <i class="bi bi-camera-video-fill text-cyan"></i>
+              <span id="follow-status-text">Auto-Follow Water: ON</span>
+            </button>
+            <button class="btn-hud" id="btn-focus-dam" title="Jump camera to Dam origin">
+              <i class="bi bi-flag-fill text-danger"></i> Dam Origin
+            </button>
+            <button class="btn-hud" id="btn-overview-reach" title="Fit full downstream reach in view">
+              <i class="bi bi-arrows-fullscreen"></i> Full Reach
+            </button>
+          </div>
+
+          <div class="hud-item hud-stats">
+            <div class="stat-badge">
+              <span class="stat-label">TIME</span>
+              <span class="stat-val text-cyan" id="hud-time">T+00:00</span>
+            </div>
+            <div class="stat-badge">
+              <span class="stat-label">FLOOD FRONT</span>
+              <span class="stat-val" id="hud-front-dist">0.0 km</span>
+            </div>
+            <div class="stat-badge">
+              <span class="stat-label">WAVE VELOCITY</span>
+              <span class="stat-val text-warning" id="hud-velocity">0.0 m/s</span>
+            </div>
+            <div class="stat-badge">
+              <span class="stat-label">DISCHARGE (Q)</span>
+              <span class="stat-val text-danger" id="hud-discharge">0 m³/s</span>
+            </div>
+            <div class="stat-badge">
+              <span class="stat-label">🔴 HIGH DANGER</span>
+              <span class="stat-val text-danger" id="hud-high-danger">0 Areas</span>
+            </div>
+            <div class="stat-badge">
+              <span class="stat-label">🟡 LOW DANGER</span>
+              <span class="stat-val text-warning" id="hud-low-danger">0 Areas</span>
+            </div>
+            <div class="stat-badge">
+              <span class="stat-label">🟢 SAFE HAVENS</span>
+              <span class="stat-val text-success" id="hud-safe-havens">4 Shelters</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating On-Map Hazard & Safety Level Legend -->
+        <div class="map-hazard-legend" id="map-hazard-legend">
+          <div class="legend-header">
+            <i class="bi bi-shield-exclamation text-danger"></i>
+            <span>HAZARD & SAFETY INDICATION LEVELS</span>
+          </div>
+          <div class="legend-rows">
+            <div class="legend-row">
+              <span class="legend-chip chip-high-danger"></span>
+              <div class="legend-text">
+                <strong class="text-danger">HIGH DANGER AREA</strong>
+                <span>Depth &ge; 2.5m · Velocity &ge; 5.0 m/s · Catastrophic Surge Force</span>
+              </div>
+            </div>
+            <div class="legend-row">
+              <span class="legend-chip chip-low-danger"></span>
+              <div class="legend-text">
+                <strong class="text-warning">LOW DANGER AREA</strong>
+                <span>Depth 0.3m &ndash; 2.5m · Peripheral Floodplain · Advisory Alert</span>
+              </div>
+            </div>
+            <div class="legend-row">
+              <span class="legend-chip chip-safe-place"></span>
+              <div class="legend-text">
+                <strong class="text-success">SAFE PLACES / HAVENS</strong>
+                <span>Elevated &gt; +25m · Designated High-Ground Relief Shelters</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- The Interactive Leaflet Map Container -->
+        <div id="sim-map" class="simulation-map-container"></div>
+
+        <!-- Floating Bottom Playback & Flow Controller -->
+        <div class="timeline-controller-bar">
+          <div class="play-controls">
+            <button class="btn-ctrl" id="btn-step-back" title="Step Back 6 min (-0.1h)"><i class="bi bi-skip-backward-fill"></i></button>
+            <button class="btn-ctrl btn-play" id="btn-play-pause" title="Play / Pause Water Flow Simulation">
+              <i class="bi bi-play-fill" id="play-icon"></i>
+            </button>
+            <button class="btn-ctrl" id="btn-step-fwd" title="Step Forward 6 min (+0.1h)"><i class="bi bi-skip-forward-fill"></i></button>
+            <button class="btn-ctrl" id="btn-reset-time" title="Reset to Breach Origin"><i class="bi bi-arrow-counterclockwise"></i></button>
+          </div>
+
+          <div class="slider-wrapper">
+            <div class="slider-info">
+              <span>Simulation Elapsed Time: <strong id="timeline-display" class="text-cyan">T+0.00 hr (0 mins)</strong></span>
+              <span>Water Flow Progress: <strong id="flow-status-badge" class="text-warning">At Dam Crest</strong></span>
+            </div>
+            <input type="range" id="timeline-slider" min="0" max="6.0" step="0.01" value="0" class="timeline-range" />
+            <div class="slider-ticks">
+              <span>0h (Breach)</span>
+              <span>1h</span>
+              <span>2h</span>
+              <span>3h</span>
+              <span>4h</span>
+              <span>5h</span>
+              <span>6h (Max Extent)</span>
+            </div>
+          </div>
+
+          <div class="speed-controls">
+            <span class="speed-label">Speed:</span>
+            <button class="btn-speed" data-speed="0.1" title="0.1x Ultra-Slow (Easy step-by-step follow)">0.1x</button>
+            <button class="btn-speed active" data-speed="0.25" title="0.25x Relaxed Pace (Recommended to follow flow)">0.25x</button>
+            <button class="btn-speed" data-speed="0.5" title="0.5x Half Speed">0.5x</button>
+            <button class="btn-speed" data-speed="1" title="1x Normal Pace">1x</button>
+            <button class="btn-speed" data-speed="2" title="2x Fast">2x</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: SPH VS DELFT3D COMPARISON -->
+      <div class="tab-pane" id="tab-compare">
+        <div class="analysis-container">
+          <div class="pane-header">
+            <h2><i class="bi bi-intersect text-cyan"></i> Hydrodynamic Solver Comparison: SPH vs Delft3D</h2>
+            <p class="text-muted">Comparative evaluation of Smoothed Particle Hydrodynamics (Lagrangian free-surface) versus Delft3D (Eulerian 2D Shallow Water Equations) along the river reach.</p>
+          </div>
+
+          <!-- Highlight KPI Cards -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="card-icon sph-icon"><i class="bi bi-droplet-fill"></i></div>
+              <div class="card-data">
+                <span class="metric-title">SPH Peak Velocity (Near-Field)</span>
+                <span class="metric-number text-cyan" id="cmp-sph-vel">-- m/s</span>
+                <span class="metric-sub">Supercritical kinetic jet at breach</span>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="card-icon delft-icon"><i class="bi bi-grid-fill"></i></div>
+              <div class="card-data">
+                <span class="metric-title">Delft3D Wave Celerity</span>
+                <span class="metric-number text-primary" id="cmp-delft-vel">-- m/s</span>
+                <span class="metric-sub">Depth-averaged shallow water speed</span>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="card-icon lead-icon"><i class="bi bi-stopwatch-fill"></i></div>
+              <div class="card-data">
+                <span class="metric-title">Near-Field Arrival Lead</span>
+                <span class="metric-number text-warning" id="cmp-lead-time">-- min</span>
+                <span class="metric-sub">SPH surge wave front arrives earlier</span>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="card-icon hadr-icon"><i class="bi bi-shield-fill-check"></i></div>
+              <div class="card-data">
+                <span class="metric-title">Relief Evacuation Recommendation</span>
+                <span class="metric-number text-success">SPH Early Alert</span>
+                <span class="metric-sub">Delft3D for long-term camp positioning</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comparative Charts -->
+          <div class="grid-2 mt-4">
+            <div class="chart-card">
+              <h3><i class="bi bi-clock-history"></i> Wave Arrival Time Comparison (Hours from Breach)</h3>
+              <canvas id="chart-arrival-compare"></canvas>
+            </div>
+            <div class="chart-card">
+              <h3><i class="bi bi-water"></i> Peak Inundation Depth Attenuation (m vs km)</h3>
+              <canvas id="chart-depth-compare"></canvas>
+            </div>
+          </div>
+
+          <!-- Detailed Station Table -->
+          <div class="table-card mt-4">
+            <h3><i class="bi bi-table"></i> Reach Station Analysis & Physics Discrepancies</h3>
+            <div class="table-responsive">
+              <table class="data-table" id="table-comparison">
+                <thead>
+                  <tr>
+                    <th>Station Name</th>
+                    <th>Distance</th>
+                    <th>SPH Arrival</th>
+                    <th>Delft3D Arrival</th>
+                    <th>Lead Δ (min)</th>
+                    <th>SPH Depth</th>
+                    <th>Delft3D Depth</th>
+                    <th>Dominant Regime</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: HYDROGRAPH & PROFILE -->
+      <div class="tab-pane" id="tab-hydrograph">
+        <div class="analysis-container">
+          <div class="pane-header">
+            <h2><i class="bi bi-graph-up text-cyan"></i> Breach Outflow Hydrograph & River Profile</h2>
+            <p class="text-muted">Froehlich (2008) ASCE empirical breach outflow discharge hydrograph Q(t) and downstream longitudinal bed & water surface elevation profile.</p>
+          </div>
+
+          <div class="grid-2 mt-3">
+            <div class="chart-card">
+              <h3><i class="bi bi-bezier2"></i> Froehlich (2008) Outflow Hydrograph Q(t)</h3>
+              <div class="chart-meta">
+                <span>Peak Discharge Qp: <strong id="val-qp" class="text-danger">-- m³/s</strong></span>
+                <span>Formation Time: <strong id="val-tf" class="text-cyan">-- hr</strong></span>
+                <span>Breach Width: <strong id="val-bw" class="text-warning">-- m</strong></span>
+              </div>
+              <canvas id="chart-hydrograph"></canvas>
+            </div>
+
+            <div class="chart-card">
+              <h3><i class="bi bi-alt"></i> Longitudinal Valley Elevation & Water Profile</h3>
+              <div class="chart-meta">
+                <span>Dam Crest Elev: <strong id="prof-dam-elev">-- m</strong></span>
+                <span>Reach Bed Drop: <strong id="prof-bed-drop">-- m</strong></span>
+              </div>
+              <canvas id="chart-longitudinal"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: HADR LOSS & DAMAGE ASSESSMENT -->
+      <div class="tab-pane" id="tab-hadr">
+        <div class="analysis-container">
+          <div class="pane-header">
+            <h2><i class="bi bi-shield-exclamation text-danger"></i> HADR (Humanitarian Assistance & Disaster Relief) Decision Support</h2>
+            <p class="text-muted">Targeted impact metrics, evacuation countdown timers, and infrastructure threat matrix for NDRF and State Disaster Management Authorities (SDMA).</p>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="card-icon text-danger"><i class="bi bi-people-fill"></i></div>
+              <div class="card-data">
+                <span class="metric-title">Total Population Exposed</span>
+                <span class="metric-number text-danger" id="hadr-total-pop">--</span>
+                <span class="metric-sub">Within primary flood surge corridor</span>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="card-icon text-warning"><i class="bi bi-building-fill-exclamation"></i></div>
+              <div class="card-data">
+                <span class="metric-title">Critical Infrastructure at Risk</span>
+                <span class="metric-number text-warning" id="hadr-infra">-- Bridges / Hydel</span>
+                <span class="metric-sub">Direct hydraulic impact risk</span>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="card-icon text-success"><i class="bi bi-tree-fill"></i></div>
+              <div class="card-data">
+                <span class="metric-title">Agricultural Land Inundated</span>
+                <span class="metric-number text-success" id="hadr-agri">-- Hectares</span>
+                <span class="metric-sub">Loss of standing kharif/rabi crops</span>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="card-icon text-cyan"><i class="bi bi-currency-rupee"></i></div>
+              <div class="card-data">
+                <span class="metric-title">Estimated Economic Exposure</span>
+                <span class="metric-number text-cyan" id="hadr-econ">₹ -- Crores</span>
+                <span class="metric-sub">Direct asset and crop assessment</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2 mt-4">
+            <div class="table-card">
+              <h3><i class="bi bi-stopwatch"></i> Sector Evacuation Countdown Matrix</h3>
+              <div class="table-responsive">
+                <table class="data-table" id="table-hadr-sectors">
+                  <thead>
+                    <tr>
+                      <th>Downstream Sector</th>
+                      <th>Dist</th>
+                      <th>Population</th>
+                      <th>Evacuation Deadline</th>
+                      <th>Max Depth</th>
+                      <th>Threat Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Injected via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card protocol-card">
+              <h3><i class="bi bi-clipboard2-check-fill text-cyan"></i> Recommended NDRF Operational Protocols</h3>
+              <ul class="protocol-list" id="protocol-list">
+                <!-- Injected via JS -->
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: GEE SENTINEL-1 SAR REMOTE SENSING -->
+      <div class="tab-pane" id="tab-gee">
+        <div class="analysis-container">
+          <div class="pane-header">
+            <h2><i class="bi bi-satellite text-cyan"></i> Near Real-Time Remote Sensing via Google Earth Engine</h2>
+            <p class="text-muted">Cloud-penetrating Sentinel-1 C-band Synthetic Aperture Radar (SAR) VV/VH automated water detection pipeline (< -16.5 dB backscatter threshold).</p>
+          </div>
+
+          <div class="grid-2 mt-3">
+            <div class="card">
+              <h3><i class="bi bi-radar"></i> Radar Remote Sensing Architecture</h3>
+              <p>During severe monsoon dam break events, optical satellites (Landsat, Sentinel-2) are blinded by 100% cloud cover. <strong>Sentinel-1 SAR C-band radar</strong> penetrates dense clouds, rain, and operates 24/7 day and night.</p>
+              
+              <div class="feature-bullets mt-3">
+                <div class="feature-item">
+                  <i class="bi bi-check-circle-fill text-success"></i>
+                  <div><strong>Specular Reflection Mechanism:</strong> Smooth standing flood water reflects radar pulses away from satellite, registering backscatter values below <code>-16.5 dB</code>.</div>
+                </div>
+                <div class="feature-item">
+                  <i class="bi bi-check-circle-fill text-success"></i>
+                  <div><strong>Automatic Baseline Masking:</strong> Permanent river channels are automatically subtracted from pre-flood reference scenes to isolate newly flooded regions.</div>
+                </div>
+                <div class="feature-item">
+                  <i class="bi bi-check-circle-fill text-success"></i>
+                  <div><strong>SRTM DEM Slope Filter:</strong> Eliminates radar mountain terrain shadow artifacts by masking out slopes > 5°.</div>
+                </div>
+              </div>
+
+              <div class="sar-toggle-box mt-4">
+                <button class="btn btn-primary" id="btn-toggle-sar-on-map">
+                  <i class="bi bi-eye"></i> View Sentinel-1 SAR Overlay on Map
+                </button>
+              </div>
+            </div>
+
+            <div class="code-card">
+              <div class="code-header">
+                <span>Google Earth Engine (GEE) Python API Pipeline</span>
+                <button class="btn-copy" id="btn-copy-gee"><i class="bi bi-clipboard"></i> Copy Script</button>
+              </div>
+              <pre><code id="gee-code-block"># GEE code will load here...</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: GIS EXPORT DELIVERABLES -->
+      <div class="tab-pane" id="tab-export">
+        <div class="analysis-container">
+          <div class="pane-header">
+            <h2><i class="bi bi-download text-cyan"></i> GIS Deliverables & Standard File Formats</h2>
+            <p class="text-muted">Downloadable industry-standard GIS packages for ESRI ArcGIS, QGIS, Google Earth, and Emergency Command Centers.</p>
+          </div>
+
+          <div class="export-cards-grid mt-4">
+            <div class="export-card">
+              <div class="export-icon"><i class="bi bi-file-earmark-zip-fill text-warning"></i></div>
+              <h3>ESRI Shapefile Archive (.shp.zip)</h3>
+              <p>Contains polygon geometries with attributes (<code>.shp</code>, <code>.shx</code>, <code>.dbf</code>, <code>.prj</code>) including peak depth, arrival hour, and risk tier.</p>
+              <a href="/api/export/shapefile" class="btn btn-outline" download>
+                <i class="bi bi-download"></i> Download Shapefile (.zip)
+              </a>
+            </div>
+
+            <div class="export-card">
+              <div class="export-icon"><i class="bi bi-globe2 text-cyan"></i></div>
+              <h3>Google Earth KML (.kml)</h3>
+              <p>Keyhole Markup Language formatted with 3D styled translucent flood boundaries, dam pins, and downstream gauging stations.</p>
+              <a href="/api/export/kml" class="btn btn-outline" download>
+                <i class="bi bi-download"></i> Download KML (.kml)
+              </a>
+            </div>
+
+            <div class="export-card">
+              <div class="export-icon"><i class="bi bi-image text-primary"></i></div>
+              <h3>Depth GeoTIFF Raster (.tif)</h3>
+              <p>Georeferenced 32-bit single band raster (EPSG:4326) encoding flood depth values in metres for direct analysis in QGIS.</p>
+              <a href="/api/export/geotiff" class="btn btn-outline" download>
+                <i class="bi bi-download"></i> Download GeoTIFF (.tif)
+              </a>
+            </div>
+
+            <div class="export-card">
+              <div class="export-icon"><i class="bi bi-file-earmark-text text-danger"></i></div>
+              <h3>HADR Disaster Report (.json)</h3>
+              <p>Structured operational JSON report containing all dam parameters, breach hydrograph time series, sector evacuation deadlines, and loss figures.</p>
+              <a href="/api/export/hadr" class="btn btn-outline" download>
+                <i class="bi bi-download"></i> Download HADR Report (.json)
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 7: OPEN-SOURCE INDIA DAM CATALOG (NRLD / CWC) -->
+      <div class="tab-pane" id="tab-catalog">
+        <div class="analysis-container">
+          <div class="pane-header">
+            <h2><i class="bi bi-journal-bookmark-fill text-cyan"></i> Open-Source India Dam Catalog (NRLD / CWC)</h2>
+            <p class="text-muted">Central Water Commission (CWC) National Register of Large Dams specifications and historical river blockage flash flood inventory.</p>
+          </div>
+
+          <div class="card mt-3">
+            <div class="table-responsive">
+              <table class="table-dark-custom" id="table-dam-catalog" style="width:100%; border-collapse: collapse;">
+                <thead>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); text-align:left; color:#94a3b8; font-size:0.85rem;">
+                    <th style="padding: 0.75rem;">Dam / Blockage Name</th>
+                    <th style="padding: 0.75rem;">River Basin</th>
+                    <th style="padding: 0.75rem;">State</th>
+                    <th style="padding: 0.75rem;">Height</th>
+                    <th style="padding: 0.75rem;">Volume</th>
+                    <th style="padding: 0.75rem;">Structure Type</th>
+                    <th style="padding: 0.75rem;">Historical Event</th>
+                    <th style="padding: 0.75rem;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="catalog-table-body" style="font-size:0.85rem;">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 8: ABOUT SYSTEM, METHODS, LANGUAGES & OPERATIONAL GUIDE -->
+      <div class="tab-pane" id="tab-about">
+        <div class="analysis-container">
+          <div class="pane-header">
+            <h2><i class="bi bi-info-circle-fill text-cyan"></i> About HYDRO-BREAK 360 — Technical Manual & Architecture</h2>
+            <p class="text-muted">Comprehensive operational reference, scientific methods, programming language stacks, navigation workflows, and multi-tier hazard classification for NTRO Problem Statement 26161.</p>
+          </div>
+
+          <!-- Plain English Quick Guide Card (Easy to Read & Present) -->
+          <div class="card mt-3" style="border-left: 5px solid #06b6d4; background: rgba(6, 182, 212, 0.05);">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
+              <h3 style="margin:0; color:#38bdf8;"><i class="bi bi-chat-quote-fill text-cyan"></i> Project Explained in Simple Everyday English (Easy to Read & Explain)</h3>
+              <span class="badge active-badge" style="background:#0284c7; color:#fff;">READ THIS FIRST</span>
+            </div>
+            
+            <p style="font-size:1.05rem; line-height:1.6;">
+              <strong>What is this project in one simple sentence?</strong><br/>
+              This project is a <strong>computer simulation tool</strong> that shows on Google Maps what happens if a dam breaks or a river gets blocked in India, showing exactly <strong>where the water will rush, how fast it will travel, which areas are in extreme danger, which areas have mild flooding, and where people can safely run to survive.</strong>
+            </p>
+
+            <div class="grid-2 mt-3" style="gap:1rem;">
+              <div style="background: rgba(255,255,255,0.03); padding:1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+                <h4 style="color:#ef4444; margin-top:0;"><i class="bi bi-shield-exclamation"></i> The 3 Zones You See During Simulation:</h4>
+                <ul style="padding-left:1.2rem; line-height:1.7; margin-bottom:0;">
+                  <li><strong class="text-danger">🔴 High Danger Area (Red Zone):</strong> Deep water (&gt; 2.5 meters) rushing violently at high speed (&gt; 5 m/s). Destroys houses, roads, and bridges. <strong>Zero survival if trapped. Must evacuate before water arrives!</strong></li>
+                  <li><strong class="text-warning">🟡 Low Danger Area (Yellow/Amber Zone):</strong> Shallow flood water (0.3 to 2.5 meters) spreading into farmlands and roads. People can still walk or drive to high ground.</li>
+                  <li><strong class="text-success">🟢 Safe Places / Havens (Green Shields):</strong> High hills, elevated schools, and disaster shelters built 25 to 600 meters above the valley floor. <strong>100% safe from flood water.</strong></li>
+                </ul>
+              </div>
+
+              <div style="background: rgba(255,255,255,0.03); padding:1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+                <h4 style="color:#38bdf8; margin-top:0;"><i class="bi bi-speedometer2"></i> Continuous Flow & Realistic Dam Sizing:</h4>
+                <ul style="padding-left:1.2rem; line-height:1.7; margin-bottom:0;">
+                  <li><strong>Width Scaled to Dam Breach:</strong> The flood starts narrow at the dam crest (calibrated to the physical breach size) and widens naturally as it travels downstream.</li>
+                  <li><strong>Continuous Flow:</strong> Water moves smoothly along every curve of the river without jumping or flickering.</li>
+                  <li><strong>Never Disappears:</strong> When the simulation reaches 6 hours, the full maximum flood extent remains permanently visible on screen.</li>
+                  <li><strong>Relaxed Speed & Replay:</strong> Runs at 0.25x (or 0.1x ultra-slow) and offers a 1-click Replay button.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div style="background: rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.25); border-radius:8px; padding:1rem; margin-top:1rem;">
+              <h4 style="color:#34d399; margin-top:0;"><i class="bi bi-mic-fill"></i> 1-Minute Presentation Script (Say this to your evaluator or professor):</h4>
+              <p style="font-style:italic; margin-bottom:0; line-height:1.6; color:#e2e8f0;">
+                "Good morning/afternoon. Our project is <strong>HYDRO-BREAK 360</strong>, created for NTRO Problem Statement 26161. When a dam breaks, emergency rescue teams have very little time to save lives. Our system solves this by simulating the flood on Google Maps in real time. It calculates how big the breach is, how fast the water wave travels, and exactly when it reaches each village. On the map, it clearly highlights <strong>Red High Danger zones</strong> where water will destroy structures, <strong>Yellow Low Danger zones</strong> where fields are flooded, and points out <strong>Green Safe Shelters</strong> on high ground where rescue teams can move citizens. It also exports official GIS shapefiles, KML maps, and disaster reports for NDRF and district administrators."
+              </p>
+            </div>
+          </div>
+
+          <!-- Section A: Executive Summary & Context -->
+          <div class="card mt-3">
+            <h3><i class="bi bi-shield-check text-success"></i> 1. Platform Executive Summary & Disaster Context</h3>
+            <p><strong>HYDRO-BREAK 360</strong> is an automated hydrodynamic modeling, spaceborne radar early warning, and Humanitarian Assistance and Disaster Relief (HADR) scenario-generation web platform. Built specifically for the <strong>National Technical Research Organisation (NTRO) Problem Statement 26161 (Smart India Hackathon 2026)</strong>, it bridges the gap between high-performance computational fluid dynamics (CFD) and frontline emergency rescue deployment.</p>
+            <div class="feature-bullets mt-3">
+              <div class="feature-item">
+                <i class="bi bi-exclamation-octagon-fill text-danger"></i>
+                <div><strong>Chamoli Disaster (Feb 2021 Precedent):</strong> A massive rock and hanging glacier detachment in the Nanda Devi sanctuary dammed the Rishi Ganga and catastrophically breached, releasing high-velocity debris torrents down the Dhauliganga river that destroyed the Raini bridge and submerged the Tapovan Vishnugad tunnels.</div>
+              </div>
+              <div class="feature-item">
+                <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+                <div><strong>Kosi River Breach (Aug 2008 Precedent):</strong> Catastrophic avulsion at Kusaha (Indo-Nepal border) shifted the river course 100+ km eastward across North Bihar flatlands, inundating over 2.7 million people and demonstrating the need for regional overbank storage modeling.</div>
+              </div>
+              <div class="feature-item">
+                <i class="bi bi-check-circle-fill text-success"></i>
+                <div><strong>Operational Mission:</strong> Predict flood wave celerity, breach hydrograph discharge $Q(t)$, village-by-village arrival deadlines, and delineate <strong>High Danger Areas</strong>, <strong>Low Danger Areas</strong>, and <strong>High-Ground Safe Places</strong> in real time.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section B: Programming Languages & Methods Table -->
+          <div class="card mt-4">
+            <h3><i class="bi bi-code-slash text-cyan"></i> 2. Programming Languages, Frameworks & Implementation Methods</h3>
+            <p class="text-muted">A modular, full-stack architecture combining high-performance scientific Python on the backend with responsive, hardware-accelerated mapping on the frontend:</p>
+            
+            <div class="table-responsive mt-3">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Architecture Layer</th>
+                    <th>Language / Runtime</th>
+                    <th>Library / Tool</th>
+                    <th>Functional Purpose & Implementation Details</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Backend Web API</strong></td>
+                    <td><strong>Python 3.10+</strong></td>
+                    <td><strong>Flask Microframework</strong> (<code>web_server.py</code>)</td>
+                    <td>Hosts RESTful API endpoints (<code>/api/presets</code>, <code>/api/simulate</code>, <code>/api/export/*</code>), manages in-memory simulation cache, serves static assets, and handles HTTP response serialization.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Hydrodynamic & Math Engine</strong></td>
+                    <td><strong>Python 3</strong></td>
+                    <td><strong>NumPy & SciPy</strong> (<code>simulation_engine.py</code>)</td>
+                    <td>Vectorized numerical execution of Froehlich (2008) ASCE breach hydrographs, Torricelli near-field surge equations, Manning-based wave celerity, and exponential cross-stream Gaussian dispersion.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>GIS Vector Generation</strong></td>
+                    <td><strong>Python 3</strong></td>
+                    <td><strong>PyShp (<code>shapefile</code>)</strong></td>
+                    <td>Dynamically compiles 2D multi-part flood inundation boundary polygons, gauging points, and risk attributes into ESRI Shapefiles (<code>.shp</code>, <code>.shx</code>, <code>.dbf</code>, <code>.prj</code>) bundled as ZIP archives.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>3D Geospatial Visualization</strong></td>
+                    <td><strong>Python 3</strong></td>
+                    <td><strong>SimpleKML</strong></td>
+                    <td>Generates Google Earth KML packages (<code>.kml</code>) styled with semi-translucent inundation meshes, breach origin pins, and downstream gauging stations for orbital walkthroughs.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Raster Surface Processing</strong></td>
+                    <td><strong>Python 3</strong></td>
+                    <td><strong>Rasterio & Affine</strong></td>
+                    <td>Computes 32-bit floating point single-band GeoTIFF rasters (<code>.tif</code>) projected to WGS84 (EPSG:4326), mapping water depth values directly for QGIS and ArcGIS analysis.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Frontend UI & State Engine</strong></td>
+                    <td><strong>JavaScript (ES6+)</strong></td>
+                    <td><strong>Native Vanilla JS</strong> (<code>static/app.js</code>)</td>
+                    <td>Manages 60-FPS animation loops, smooth 20-FPS timeline playback at reduced speeds (0.25x to 4x), auto-follow camera tracking maths, reactive telemetry DOM updates, and hazard zone styling.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Interactive Geospatial Mapping</strong></td>
+                    <td><strong>JavaScript</strong></td>
+                    <td><strong>Leaflet.js (v1.9.4)</strong></td>
+                    <td>Renders hardware-accelerated interactive web maps displaying Google Satellite, Google Hybrid, Google Terrain, and OpenStreetMap tiles, SVG vector overlays, animated markers, and custom popups.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Engineering Data Graphics</strong></td>
+                    <td><strong>JavaScript</strong></td>
+                    <td><strong>Chart.js</strong></td>
+                    <td>Canvas-rendered 60-FPS responsive line graphs for Froehlich breach outflow hydrographs $Q(t)$, longitudinal valley bed profiles, and SPH vs. Delft3D arrival curves.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>UI Layout & Theming</strong></td>
+                    <td><strong>HTML5 & CSS3</strong></td>
+                    <td><strong>CSS Grid & Flexbox, Bootstrap Icons</strong></td>
+                    <td>NTRO Command Center dark theme (<code>#0b0f19</code>), glassmorphism floating telemetry HUD, responsive sidebars, glowing status LEDs, and hazard color-coded chips.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Section C: Multi-Tier Hazard Classification System -->
+          <div class="card mt-4">
+            <h3><i class="bi bi-triangle-half text-danger"></i> 3. Multi-Tier Hazard Classification & Safety Indication System</h3>
+            <p class="text-muted">During hydrodynamic simulations, the platform dynamically delineates three distinct levels of spatial safety and operational risk:</p>
+            
+            <div class="metrics-grid mt-3">
+              <div class="metric-card" style="border-left: 4px solid #ef4444;">
+                <div class="card-icon text-danger"><i class="bi bi-radioactive"></i></div>
+                <div class="card-data">
+                  <span class="metric-title text-danger">🔴 HIGH DANGER AREA</span>
+                  <span class="metric-number text-danger" style="font-size: 1.1rem;">Depth &ge; 2.5 m · Vel &ge; 5.0 m/s</span>
+                  <span class="metric-sub">Primary surge torrent corridor. Catastrophic hydrodynamic pressure destroys masonry, washes out bridges, and creates zero-survival conditions. Total evacuation deadline expires upon front arrival.</span>
+                </div>
+              </div>
+
+              <div class="metric-card" style="border-left: 4px solid #f59e0b;">
+                <div class="card-icon text-warning"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                <div class="card-data">
+                  <span class="metric-title text-warning">🟡 LOW DANGER AREA</span>
+                  <span class="metric-number text-warning" style="font-size: 1.1rem;">Depth 0.3 m &ndash; 2.5 m</span>
+                  <span class="metric-sub">Peripheral floodplain diffusion & backwater storage. Submerges agricultural crop fields, causes road waterlogging, and cuts off low-lying evacuation routes. Advisory warning active.</span>
+                </div>
+              </div>
+
+              <div class="metric-card" style="border-left: 4px solid #10b981;">
+                <div class="card-icon text-success"><i class="bi bi-shield-fill-check"></i></div>
+                <div class="card-data">
+                  <span class="metric-title text-success">🟢 SAFE PLACES / HAVENS</span>
+                  <span class="metric-number text-success" style="font-size: 1.1rem;">Elevation &gt; +25 m to +600 m</span>
+                  <span class="metric-sub">Designated high-ground disaster relief camps, hospital plateaus, high-school mounds, and elevated military bases located 100% outside and above the peak flood surge reach.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section D: Web Pages & Navigation Guide -->
+          <div class="card mt-4">
+            <h3><i class="bi bi-window-stack text-cyan"></i> 4. Summary of Web Pages & Interface Workspaces</h3>
+            
+            <div class="feature-bullets mt-3">
+              <div class="feature-item">
+                <i class="bi bi-map-fill text-cyan"></i>
+                <div><strong>Tab 1: Flow Simulation Map (<code>tab-map</code>):</strong> Fullscreen GIS workspace. Renders dam breach crest origin, Google Maps satellite tiles, Lagrangian water particles, High & Low Danger polygon zones, Green Safe Haven pins, live floating telemetry HUD, and bottom timeline playback controller.</div>
+              </div>
+              <div class="feature-item">
+                <i class="bi bi-intersect text-primary"></i>
+                <div><strong>Tab 2: SPH vs Delft3D Comparison (<code>tab-compare</code>):</strong> Dual-solver hydrodynamic evaluation workspace. Pits Lagrangian particle mechanics against Eulerian 2D shallow water equations, showing peak near-field velocities, arrival lead times, and station-by-station physics discrepancies.</div>
+              </div>
+              <div class="feature-item">
+                <i class="bi bi-graph-up-arrow text-warning"></i>
+                <div><strong>Tab 3: Hydrograph & Longitudinal Profile (<code>tab-hydrograph</code>):</strong> Hydraulic source engineering workspace. Features the Froehlich (2008) ASCE outflow hydrograph $Q(t)$ ($Q_p$, $t_f$, $B_{\text{avg}}$) and the longitudinal valley elevation profile showing riverbed drop and water surface slopes.</div>
+              </div>
+              <div class="feature-item">
+                <i class="bi bi-shield-exclamation text-danger"></i>
+                <div><strong>Tab 4: HADR Loss Assessment (<code>tab-hadr</code>):</strong> Humanitarian Assistance and Disaster Relief decision support dashboard. Displays exposed population, critical infrastructure at risk, crop acreage loss in hectares, INR Crore financial damage, and sector-by-sector evacuation countdown timers.</div>
+              </div>
+              <div class="feature-item">
+                <i class="bi bi-satellite text-magenta"></i>
+                <div><strong>Tab 5: GEE Sentinel-1 SAR Remote Sensing (<code>tab-gee</code>):</strong> Spaceborne radar analysis module. Outlines cloud-penetrating Sentinel-1 C-band SAR specular reflection physics ($< -16.5\text{ dB}$), enables map overlays, and supplies a copy-ready Google Earth Engine Python script.</div>
+              </div>
+              <div class="feature-item">
+                <i class="bi bi-download text-success"></i>
+                <div><strong>Tab 6: GIS Export Deliverables (<code>tab-export</code>):</strong> Data hub providing one-click browser downloads of ESRI Shapefile packages (<code>.zip</code>), Google Earth KML (<code>.kml</code>), GeoTIFF depth rasters (<code>.tif</code>), and structured HADR operational JSON reports.</div>
+              </div>
+              <div class="feature-item">
+                <i class="bi bi-info-circle text-cyan"></i>
+                <div><strong>Tab 7: About System & Operational Guide (<code>tab-about</code>):</strong> This comprehensive reference manual detailing the system methods, technologies, navigation bars, and hazard classifications.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section E: Detailed Breakdown of Navigation Bars -->
+          <div class="card mt-4">
+            <h3><i class="bi bi-compass text-cyan"></i> 5. Comprehensive Breakdown of All Navigation Bars</h3>
+            
+            <h4 class="mt-3 text-cyan"><i class="bi bi-layout-text-window-reverse"></i> Top Navigation Bar (<code>.app-header</code>)</h4>
+            <div class="table-responsive mt-2">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Control Element</th>
+                    <th>DOM ID / Class</th>
+                    <th>Operational Function & Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Platform Identity & Logo</strong></td>
+                    <td><code>.brand-logo</code></td>
+                    <td>Displays the system title (<code>HYDRO-BREAK 360</code>) and Problem Statement affiliation (<code>NTRO Problem Statement ID: 26161</code>).</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Simulation Engine Status</strong></td>
+                    <td><code>.status-pill</code></td>
+                    <td>Live system health badge with a glowing green pulse LED verifying backend simulation microservices are online.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Workspace Tab Switchers</strong></td>
+                    <td><code>.nav-tabs-bar .tab-btn</code></td>
+                    <td>Instant client-side routing between the 7 primary analytical workspaces without reloading the browser.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Export .SHP Quick Action</strong></td>
+                    <td><code>#btn-quick-export</code></td>
+                    <td>One-click top navbar button triggering immediate download of the currently active scenario's ESRI Shapefile archive.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Run Scenario Button</strong></td>
+                    <td><code>#btn-re-run</code></td>
+                    <td>Reads all sidebar input sliders, transmits a POST payload to <code>/api/simulate</code>, re-computes hydrodynamic equations, and re-renders maps and charts.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h4 class="mt-4 text-cyan"><i class="bi bi-layout-sidebar-inset"></i> Left-Side Navigation & Control Sidebar (<code>#sidebar</code>)</h4>
+            <div class="table-responsive mt-2">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Sidebar Section</th>
+                    <th>Input Control</th>
+                    <th>Technical Function & Scientific Range</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td rowspan="2"><strong>1. Select River & Dam Site</strong></td>
+                    <td><code>#preset-selector</code></td>
+                    <td>Dropdown selector loaded with 5 historically verified Indian river basins (Rishi Ganga, Subansiri, Tehri, Mullaperiyar, Kosi) plus Custom Location mode.</td>
+                  </tr>
+                  <tr>
+                    <td><code>#site-description</code></td>
+                    <td>Real-world historical context, disaster records, and geographical characteristics of the chosen reach.</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="6"><strong>2. Dam & Reservoir Specifications</strong></td>
+                    <td><code>#param-dam-height</code></td>
+                    <td>Slider setting dam structural height from foundation to crest ($5\text{ m}$ to $270\text{ m}$).</td>
+                  </tr>
+                  <tr>
+                    <td><code>#param-water-head</code></td>
+                    <td>Slider setting effective water column $h_w$ behind dam crest at failure ($3\text{ m}$ to $250\text{ m}$).</td>
+                  </tr>
+                  <tr>
+                    <td><code>#param-res-volume</code></td>
+                    <td>Slider setting impounded reservoir water volume ($1.0\text{ MCM}$ to $1200.0\text{ MCM}$).</td>
+                  </tr>
+                  <tr>
+                    <td><code>#param-failure-mode</code></td>
+                    <td>Dropdown selecting breach mechanics: Overtopping ($k_O = 1.3, z = 1.0$), Piping ($k_O = 1.0, z = 0.9$), or Landslide Breach.</td>
+                  </tr>
+                  <tr>
+                    <td><code>#param-slope</code></td>
+                    <td>Slider setting longitudinal valley bed slope $S_0$ ($0.0005$ to $0.0600\text{ m/m}$).</td>
+                  </tr>
+                  <tr>
+                    <td><code>#param-mannings</code></td>
+                    <td>Slider setting channel hydraulic roughness Manning's $n$ ($0.020$ to $0.070\text{ s/m}^{1/3}$).</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Custom GPS Coordinates</strong></td>
+                    <td><code>#custom-lat</code>, <code>#custom-lon</code></td>
+                    <td>Decimal degree inputs North and East; automatically generates a 5-station downstream flood path and 3 safe havens.</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="7"><strong>3. Simulation Layer Toggles</strong></td>
+                    <td><code>#layer-hazard-zones</code></td>
+                    <td>Toggles spatial rendering of red High Danger Area and amber Low Danger Area boundary polygons.</td>
+                  </tr>
+                  <tr>
+                    <td><code>#layer-safe-places</code></td>
+                    <td>Toggles green shield pins for high-ground evacuation shelters and emergency relief camps.</td>
+                  </tr>
+                  <tr>
+                    <td><code>#layer-sph</code></td>
+                    <td>Toggles Lagrangian fluid particles representing near-field supercritical surge spray.</td>
+                  </tr>
+                  <tr>
+                    <td><code>#layer-delft3d</code></td>
+                    <td>Toggles depth-averaged 2D inundation polygon boundary mesh.</td>
+                  </tr>
+                  <tr>
+                    <td><code>#layer-stations</code></td>
+                    <td>Toggles downstream settlement and bridge pins with arrival time and depth popups.</td>
+                  </tr>
+                  <tr>
+                    <td><code>#layer-vectors</code></td>
+                    <td>Toggles hydrodynamic velocity trajectory arrows indicating downstream current vectors.</td>
+                  </tr>
+                  <tr>
+                    <td><code>#layer-sar</code></td>
+                    <td>Toggles Sentinel-1 SAR satellite microwave water detection boundary overlay.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>4. Map Provider Layer</strong></td>
+                    <td><code>.btn-basemap</code></td>
+                    <td>Switches between Google Satellite, Google Hybrid, Google Terrain, and OpenStreetMap raster tiles.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h4 class="mt-4 text-cyan"><i class="bi bi-display"></i> Floating Telemetry HUD (Heads-Up Display)</h4>
+            <div class="table-responsive mt-2">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>HUD Component</th>
+                    <th>DOM ID / Class</th>
+                    <th>Operational Significance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Auto-Follow Water Camera</strong></td>
+                    <td><code>#btn-toggle-follow</code></td>
+                    <td>When activated, Leaflet camera pans continuously to keep the advancing flood wave front centered in the viewport.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Dam Origin Focus</strong></td>
+                    <td><code>#btn-focus-dam</code></td>
+                    <td>Instantly centers and zooms camera directly to the dam crest breach location.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Full Reach Overview</strong></td>
+                    <td><code>#btn-overview-reach</code></td>
+                    <td>Pans and zooms to fit the complete downstream river corridor from breach to terminus within the viewport.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Live Telemetry Badges</strong></td>
+                    <td><code>#hud-time</code>, <code>#hud-front-dist</code>, <code>#hud-velocity</code>, <code>#hud-discharge</code></td>
+                    <td>Real-time readouts of elapsed simulation hours ($T+hh:mm$), wave travel distance ($km$), front velocity ($m/s$), and outflow ($m^3/s$).</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Live Danger & Safety Counters</strong></td>
+                    <td><code>#hud-high-danger</code>, <code>#hud-low-danger</code>, <code>#hud-safe-havens</code></td>
+                    <td>Real-time counts of inundated settlements in High Danger, peripheral areas in Low Danger, and active Green Safe Havens.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h4 class="mt-4 text-cyan"><i class="bi bi-sliders2"></i> Bottom Timeline Controller & Playback Speed Bar</h4>
+            <div class="table-responsive mt-2">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Playback Control</th>
+                    <th>DOM ID / Class</th>
+                    <th>Operational Feature & Adjusted Speeds</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Play / Pause Button</strong></td>
+                    <td><code>#btn-play-pause</code></td>
+                    <td>Starts or stops the smooth 20-FPS hydrodynamic animation loop.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Step Forward / Backward</strong></td>
+                    <td><code>#btn-step-fwd</code>, <code>#btn-step-back</code></td>
+                    <td>Steps simulation time by 6-minute increments ($\pm 0.10\text{ hr}$) for detailed wave analysis.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Reset to Origin</strong></td>
+                    <td><code>#btn-reset-time</code></td>
+                    <td>Instantly rewinds simulation time to $T+00:00$ and re-centers viewport on dam breach.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Smooth Timeline Scrubber</strong></td>
+                    <td><code>#timeline-slider</code></td>
+                    <td>Continuous scrubber bar from $0.00\text{ hr}$ to $6.00\text{ hr}$ with ultra-fine $0.01\text{ hr}$ ($36\text{ sec}$) granularity.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Speed: 0.25x (Slow-Motion)</strong></td>
+                    <td><code>[data-speed="0.25"]</code></td>
+                    <td>Slow-motion mode taking <strong>8 minutes</strong> for a 6-hour simulation. Ideal for close inspection of wave arrival at bridges and villages.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Speed: 0.5x (Half Speed)</strong></td>
+                    <td><code>[data-speed="0.5"]</code></td>
+                    <td>Comfortable slow pace taking <strong>4 minutes</strong> for a 6-hour simulation.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Speed: 1x (Normal Pace)</strong></td>
+                    <td><code>[data-speed="1"]</code></td>
+                    <td>Default calibrated pace taking <strong>2 minutes</strong> for full 6-hour run (advancing 3 simulation minutes per real second).</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Speed: 2x (Fast Forward)</strong></td>
+                    <td><code>[data-speed="2"]</code></td>
+                    <td>Fast pace taking <strong>1 minute</strong> for full 6-hour run.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Speed: 4x (Rapid Preview)</strong></td>
+                    <td><code>[data-speed="4"]</code></td>
+                    <td>Rapid review mode completing full reach in <strong>30 seconds</strong>.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Leaflet & App Script -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
